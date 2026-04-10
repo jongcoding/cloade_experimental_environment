@@ -42,4 +42,8 @@ allowed-tools: Bash(terraform *) Bash(aws *)
 
 ---
 
-실험 완료 후 반드시 `/harness-loop`로 복귀해서 검증된 기법을 Stage로 구현한다.
+실험 완료 후 복귀:
+- **멀티에이전트**: `/orchestrate [코드네임] [기법]을 Stage로 구현` (권장)
+- **싱글에이전트**: `/harness-loop [코드네임]`
+
+> **팁**: `/orchestrate` 사용 시, 이 실험 결과가 Recon Scout 에이전트 → Terraform Engineer 에이전트로 자동 전달된다.

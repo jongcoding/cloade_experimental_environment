@@ -1,15 +1,19 @@
 ---
 name: harness-loop
 description: >-
-  핵심 하네스 루프 작업 세션. Stage를 추가/검증/수정할 때 사용.
-  Use when building stages, running validation, debugging connections,
-  or doing regression testing on the attack chain.
+  싱글 에이전트 하네스 루프. 간단한 작업이나 단일 Stage 작업 시 사용.
+  멀티에이전트 조율이 필요한 경우 /orchestrate를 대신 사용할 것.
+  Use for simple single-stage work. For multi-stage or parallel work, use /orchestrate instead.
 argument-hint: "[시나리오 코드네임]"
 disable-model-invocation: true
 allowed-tools: Bash(terraform *) Bash(aws *) Bash(bash validation/*) Bash(kubectl *)
 ---
 
-# 하네스 루프 세션
+# 하네스 루프 세션 (싱글 에이전트 모드)
+
+> **참고**: 이 스킬은 싱글 에이전트로 동작한다.
+> 복수 Stage 추가, 병렬 작업, 회귀 실패 대응 등 복잡한 작업은 `/orchestrate`를 사용해라.
+> `/orchestrate`는 전문 서브에이전트(Terraform Engineer, Attack Executor, Failure Analyst 등)를 스폰해서 병렬로 작업한다.
 
 시나리오: $ARGUMENTS
 AWS 계정: [계정 ID]

@@ -48,4 +48,9 @@ allowed-tools: Bash(terraform *) Bash(aws *)
 
 ---
 
-유망한 벡터를 발견하면 `/harness-loop`로 복귀해서 Stage로 구현한다.
+유망한 벡터를 발견하면 복귀:
+- **멀티에이전트**: `/orchestrate [코드네임] [벡터]를 Stage로 구현` (권장)
+- **싱글에이전트**: `/harness-loop [코드네임]`
+
+> **팁**: `/orchestrate`에서 Recon Scout 에이전트가 이 스킬의 역할을 수행한다.
+> 단독 탐색이 필요할 때만 이 스킬을 직접 사용해라.

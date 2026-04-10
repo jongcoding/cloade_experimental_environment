@@ -48,4 +48,9 @@ disable-model-invocation: true
 
 ---
 
-분석이 끝나면 `/harness-loop`로 복귀한다.
+분석이 끝나면 복귀:
+- **멀티에이전트**: `/orchestrate`로 복귀 — Failure Analyst 결과 → Terraform Engineer로 자동 전달
+- **싱글에이전트**: `/harness-loop [코드네임]`
+
+> **팁**: `/orchestrate`에서 Failure Analyst 에이전트가 이 스킬의 역할을 수행한다.
+> 복잡한 디버깅이 필요할 때만 이 스킬을 직접 사용해라.

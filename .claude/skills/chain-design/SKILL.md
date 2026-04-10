@@ -50,4 +50,6 @@ disable-model-invocation: true
 
 ---
 
-초안 완성 후 `/harness-loop`의 첫 세션 변형으로 Stage 0부터 구현/검증을 시작한다.
+초안 완성 후:
+- **멀티에이전트**: `/orchestrate [코드네임] Stage 0 구현`으로 시작 (권장)
+- **싱글에이전트**: `/harness-loop [코드네임]`으로 시작
