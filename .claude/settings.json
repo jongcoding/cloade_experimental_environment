@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(terraform *)",
+      "Bash(aws *)",
+      "Bash(kubectl *)",
+      "Bash(bash validation/*)",
+      "Bash(curl *)",
+      "Bash(nmap *)",
+      "Bash(python *)",
+      "Bash(pip install *)"
+    ]
+  }
+}
