@@ -1,0 +1,1 @@
+Login form accepts username only. Try classic SQLi patterns.

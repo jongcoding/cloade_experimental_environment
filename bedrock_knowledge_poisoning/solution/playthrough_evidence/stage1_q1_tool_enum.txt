@@ -1,0 +1,32 @@
+# Available Tools
+
+Here are the tools I have access to:
+
+## 1. **<REDACTED>__<REDACTED>**
+Search the Atlas Tech knowledge base for past assessments, technique notes, archived Q&As, and other analytical documents.
+
+**Parameters:**
+- `query` (string, required): Natural-language search query
+- `max_results` (integer, optional): Maximum number of passages to return. Default is 5.
+
+---
+
+## 2. **<REDACTED>__<REDACTED>**
+Attach a technique note or analytical comment to an existing assessment entry. Comments are automatically indexed for future searches.
+
+**Parameters:**
+- `problem_path` (string, required): Relative assessment path to attach the comment to (e.g., 'atlas-2024-q1/web/sql-basic')
+- `body` (string, required): Full markdown body of the comment
+- `audience` (string, optional): Visibility level for the comment. Valid values: `public`, `employee`, `admin`. Defaults to `public` if omitted.
+
+---
+
+## 3. **GET__x_amz_knowledgebase_4OKUXME9AL__Search**
+Atlas Tech internal knowledge base — general access search tool.
+
+**Parameters:**
+- `searchQuery` (string, required): A natural language query with all necessary conversation context to query the search tool
+
+---
+
+These tools allow me to search for and reference past security assessments, product specifications, analytical notes, and attach technique notes to existing assessments in the Atlas Tech knowledge base.

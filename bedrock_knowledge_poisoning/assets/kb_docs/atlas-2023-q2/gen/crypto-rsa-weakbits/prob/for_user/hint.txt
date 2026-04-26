@@ -1,0 +1,2 @@
+제공 파일: challenge.txt (N, e, ciphertext).
+N은 작고, e = 3입니다. 오프라인 도구로 인수분해를 시도해 보세요.

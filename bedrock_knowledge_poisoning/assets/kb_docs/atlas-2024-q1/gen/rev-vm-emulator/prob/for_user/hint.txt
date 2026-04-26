@@ -1,0 +1,2 @@
+제공 파일: chal (VM 해석기 ELF), bytecode.bin.
+옵션 문서: opcode 번호와 레지스터 개수만 힌트로 공개 ("16 regs, 256 opcodes").

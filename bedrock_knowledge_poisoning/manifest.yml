@@ -1,0 +1,30 @@
+---
+# The name of the scenario, alpha-numeric characters only, and underscore-separated
+- name: bedrock_knowledge_poisoning
+
+# The name of the author(s), comma separated
+- author: Cloud Attack Lab
+
+# The version of the scenario, where major versions are breaking changes and minor are small fixes.
+- version: 10.0.0
+
+# Text displayed to the user when they type "{{ scenario_name }} help"
+- help: |
+        Atlas Tech 사내 SaaS 위키 챗봇 (Cognito + API Gateway + Bedrock Agent x2 +
+        같은 KB 공유) 에 사원으로 들어가 ADD_COMMENT 도구의 audience 파라미터를
+        admin 으로 박는 mass assignment 결함을 통해 admin 전용 retrieve 채널을
+        만든다. 보안팀의 평범한 검색 쿼리에 그 댓글이 끼어들어 admin LLM 이
+        미공개 평가서 도구 (GET_ATLAS_REFERENCE) 를 자발 호출, 답변에 flag 가
+        포함되고 챗봇 백엔드가 답변을 archive/qna/ 로 자동 저장 (audience=public)
+        하면 사원이 자기 권한으로 검색해 회수.
+
+        Initial entry: Cognito self-signup -> employee JWT (cognito:groups=[])
+        Attack vector: KB metadata sidecar mass assignment + indirect prompt
+        injection via RAG retrieval + auto-archive sanitize gap
+        Final objective: FLAG{atlas_unreleased_via_metadata_mass_assignment}
+                         (admin-only/atlas-2026-q2-unreleased/gen/web-sql-vault/
+                          README.md 본문에 박혀 있음, 풀이자에게 직접
+                          GetObject 권한은 처음부터 끝까지 없음)
+
+# Records the date upon which this scenario was last updated, in MM-DD-YYYY format
+- last-updated: 04-26-2026

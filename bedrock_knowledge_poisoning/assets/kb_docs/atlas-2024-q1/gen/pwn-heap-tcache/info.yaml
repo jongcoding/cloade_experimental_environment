@@ -1,0 +1,9 @@
+name: heap-tcache
+
+category: pwn
+
+description: |-
+  깔끔한 메모 앱이지만 삭제 이후가 찜찜합니다.
+  nc chal.atlas-2024.internal 9002
+
+flag: atlas2024{tcache_d0ubl3_fr33_a94b72d6e1c3f08a}

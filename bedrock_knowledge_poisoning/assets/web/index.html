@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>저스틴비버 CTF Labs — 사내 문서 어시스턴트</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 20px; }
+  .container { max-width: 860px; margin: 0 auto; }
+  h1 { color: #f59e0b; margin-bottom: 4px; }
+  .sub { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+  .box { background: #1e293b; padding: 20px; border-radius: 10px; margin: 12px 0; border: 1px solid #334155; }
+  input, textarea, button { width: 100%; padding: 10px 12px; margin: 6px 0; border: 1px solid #475569; border-radius: 6px; background: #0f172a; color: #e2e8f0; font-family: inherit; font-size: 14px; }
+  input:focus, textarea:focus { outline: 0; border-color: #f59e0b; }
+  button { background: #f59e0b; color: #0f172a; font-weight: 600; cursor: pointer; border: 0; transition: background 0.15s; }
+  button:hover:not(:disabled) { background: #d97706; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.secondary { background: #334155; color: #e2e8f0; width: auto; display: inline-block; padding: 6px 14px; }
+  .msg-user { background: #334155; padding: 10px 14px; border-radius: 10px; margin: 8px 0 8px 40px; }
+  .msg-bot { background: #1e293b; border: 1px solid #334155; padding: 10px 14px; border-radius: 10px; margin: 8px 40px 8px 0; white-space: pre-wrap; word-wrap: break-word; }
+  .msg-sys { background: #422006; color: #fbbf24; padding: 8px 12px; border-radius: 6px; margin: 8px 0; font-size: 13px; }
+  #chat-log { min-height: 320px; max-height: 520px; overflow-y: auto; padding: 12px; background: #0f172a; border-radius: 6px; margin-bottom: 10px; border: 1px solid #334155; }
+  .tabs { margin-bottom: 16px; border-bottom: 1px solid #334155; }
+  .tab { padding: 10px 20px; cursor: pointer; background: transparent; border: 0; color: #94a3b8; display: inline-block; width: auto; font-weight: 500; }
+  .tab.active { color: #f59e0b; border-bottom: 2px solid #f59e0b; }
+  .hidden { display: none; }
+  .user-info { font-size: 13px; color: #94a3b8; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  label { font-size: 12px; color: #94a3b8; display: block; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .status { font-size: 12px; margin-top: 8px; }
+  .status.error { color: #f87171; }
+  .status.success { color: #4ade80; }
+  .footer { text-align: center; font-size: 11px; color: #64748b; margin-top: 30px; }
+  code { background: #0f172a; padding: 2px 6px; border-radius: 3px; font-size: 12px; color: #fbbf24; }
+</style></head>
+<body>
+<div class="container">
+  <h1>🎤 저스틴비버 CTF Labs</h1>
+  <p class="sub">사내 문서 어시스턴트 — 과거 대회 문제 · 해설 · 출제 가이드 검색 · 인시던트 티켓 관리</p>
+
+  <div id="auth-section" class="box">
+    <div class="tabs">
+      <button class="tab active" id="tab-btn-signup" onclick="showTab('signup')">회원가입</button>
+      <button class="tab" id="tab-btn-login" onclick="showTab('login')">로그인</button>
+    </div>
+
+    <div id="tab-signup">
+      <label>이메일</label>
+      <input type="email" id="signup-email" placeholder="employee@jbctf.example" autocomplete="email">
+      <label>비밀번호 (최소 8자)</label>
+      <input type="password" id="signup-password" autocomplete="new-password">
+      <button onclick="doSignup()" id="btn-signup">가입하기</button>
+      <div id="signup-msg" class="status"></div>
+      <p style="font-size:11px;color:#64748b;margin-top:12px">신규 사원: self-signup 후 즉시 사용 가능 (email 검증 자동 스킵)</p>
+    </div>
+
+    <div id="tab-login" class="hidden">
+      <label>이메일</label>
+      <input type="email" id="login-email" autocomplete="email">
+      <label>비밀번호</label>
+      <input type="password" id="login-password" autocomplete="current-password">
+      <button onclick="doLogin()" id="btn-login">로그인</button>
+      <div id="login-msg" class="status"></div>
+    </div>
+  </div>
+
+  <div id="chat-section" class="box hidden">
+    <div class="user-info">
+      <span>📛 로그인: <code id="user-display"></code> · 세션 <code id="session-display"></code></span>
+      <span>
+        <button class="secondary" onclick="toggleCommentForm()">댓글 작성</button>
+        <button class="secondary" onclick="doLogout()">로그아웃</button>
+      </span>
+    </div>
+    <div id="chat-log"></div>
+    <textarea id="chat-input" rows="3" placeholder="과거 대회 문제를 검색하거나 어시스턴트에게 질문하세요. 예) '2024-pre의 web-sql-basic 문제 요약해줘'"></textarea>
+    <button onclick="sendMessage()" id="btn-send">전송 (Enter)</button>
+
+    <div id="comment-form" class="hidden" style="margin-top:16px;padding:14px;background:#0f172a;border:1px solid #334155;border-radius:6px">
+      <h3 style="margin:0 0 8px 0;color:#f59e0b;font-size:15px">📝 과거 문제에 댓글 남기기</h3>
+      <p style="font-size:12px;color:#94a3b8;margin:0 0 10px 0">
+        KB에 인덱싱되어 다른 직원의 검색 결과에 나타납니다. 기술 노트, 페이로드 메모, 분석 코멘트 등에 사용하세요.
+      </p>
+      <label>Problem path</label>
+      <input id="comment-path" placeholder="예: jbctf-2024-pre/web/sql-basic">
+      <label>Comment body (markdown)</label>
+      <textarea id="comment-body" rows="6" placeholder="기법 설명, 페이로드, 링크 등"></textarea>
+      <button onclick="submitComment()" id="btn-comment">댓글 등록</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    저스틴비버 CTF Labs · JBCTF 사내 서비스 · 감사 문의: <code>security@jbctf.example</code>
+  </div>
+</div>
+
+<!-- Cognito SDK -->
+<script src="https://unpkg.com/amazon-cognito-identity-js@6.3.12/dist/amazon-cognito-identity.min.js"></script>
+
+<script>
+const USER_POOL_ID = "${USER_POOL_ID}";
+const CLIENT_ID    = "${CLIENT_ID}";
+const API_URL      = "${API_URL}/chat";
+const REGION       = "${REGION}";
+
+const userPool = new AmazonCognitoIdentity.CognitoUserPool({
+  UserPoolId: USER_POOL_ID,
+  ClientId: CLIENT_ID,
+});
+
+let currentUser = null;
+let currentJWT = null;
+let sessionId = "web_" + Math.random().toString(36).substr(2, 12);
+
+function showTab(tab) {
+  document.getElementById('tab-btn-signup').classList.toggle('active', tab === 'signup');
+  document.getElementById('tab-btn-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-signup').classList.toggle('hidden', tab !== 'signup');
+  document.getElementById('tab-login').classList.toggle('hidden', tab !== 'login');
+}
+
+function setStatus(id, text, kind) {
+  const el = document.getElementById(id);
+  el.className = 'status ' + (kind || '');
+  el.textContent = text;
+}
+
+function doSignup() {
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  if (!email || password.length < 8) { setStatus('signup-msg', '이메일과 8자 이상 비밀번호가 필요합니다.', 'error'); return; }
+
+  const attrs = [new AmazonCognitoIdentity.CognitoUserAttribute({Name: 'email', Value: email})];
+  const btn = document.getElementById('btn-signup'); btn.disabled = true;
+  setStatus('signup-msg', '가입 처리 중...', '');
+
+  userPool.signUp(email, password, attrs, null, (err, result) => {
+    btn.disabled = false;
+    if (err) { setStatus('signup-msg', '에러: ' + err.message, 'error'); return; }
+    setStatus('signup-msg', '가입 완료 (auto-confirm 적용됨). 로그인 탭에서 로그인해주세요.', 'success');
+    document.getElementById('login-email').value = email;
+  });
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!email || !password) { setStatus('login-msg', '이메일과 비밀번호를 입력하세요.', 'error'); return; }
+
+  const authDetails = new AmazonCognitoIdentity.AuthenticationDetails({Username: email, Password: password});
+  const cognitoUser = new AmazonCognitoIdentity.CognitoUser({Username: email, Pool: userPool});
+  const btn = document.getElementById('btn-login'); btn.disabled = true;
+  setStatus('login-msg', '인증 중...', '');
+
+  cognitoUser.authenticateUser(authDetails, {
+    onSuccess: (result) => {
+      btn.disabled = false;
+      currentJWT = result.getIdToken().getJwtToken();
+      currentUser = email;
+      showChat();
+    },
+    onFailure: (err) => {
+      btn.disabled = false;
+      setStatus('login-msg', '에러: ' + err.message, 'error');
+    },
+  });
+}
+
+function doLogout() {
+  currentJWT = null;
+  currentUser = null;
+  sessionId = "web_" + Math.random().toString(36).substr(2, 12);
+  document.getElementById('chat-log').innerHTML = '';
+  document.getElementById('chat-section').classList.add('hidden');
+  document.getElementById('auth-section').classList.remove('hidden');
+}
+
+function showChat() {
+  document.getElementById('auth-section').classList.add('hidden');
+  document.getElementById('chat-section').classList.remove('hidden');
+  document.getElementById('user-display').textContent = currentUser;
+  document.getElementById('session-display').textContent = sessionId;
+  appendMessage('bot', '안녕하세요! 저스틴비버 CTF Labs 사내 문서 어시스턴트입니다.\n\n다음과 같은 작업을 도와드립니다:\n• 과거 대회(jbctf 2023/2024/2025) 문제 및 해설 검색\n• 기법 노트 / 페이로드 메모를 과거 문제에 댓글로 남기기 (상단 "댓글 작성" 버튼)\n• 출제 가이드라인 / SOP 문서 조회\n\n무엇을 도와드릴까요?');
+}
+
+function toggleCommentForm() {
+  const form = document.getElementById('comment-form');
+  form.classList.toggle('hidden');
+  if (!form.classList.contains('hidden')) {
+    document.getElementById('comment-path').focus();
+  }
+}
+
+function submitComment() {
+  const path = document.getElementById('comment-path').value.trim();
+  const body = document.getElementById('comment-body').value.trim();
+  if (!path || !body) {
+    appendMessage('sys', 'problem_path 와 body 는 둘 다 필수입니다.');
+    return;
+  }
+  // Build a natural-language instruction for the agent; the agent will
+  // invoke ADD_COMMENT internally. Keeping the control plane unified on
+  // /chat avoids a second signed API surface.
+  const msg = "Please add a comment on " + path + " with the following body:\n\n" + body;
+  document.getElementById('chat-input').value = msg;
+  sendMessage();
+  // Clear + collapse the form after queuing the request.
+  document.getElementById('comment-path').value = '';
+  document.getElementById('comment-body').value = '';
+  document.getElementById('comment-form').classList.add('hidden');
+}
+
+function appendMessage(who, text) {
+  const log = document.getElementById('chat-log');
+  const div = document.createElement('div');
+  div.className = 'msg-' + who;
+  const prefix = who === 'user' ? '🙋 ' : who === 'bot' ? '🤖 ' : 'ℹ️ ';
+  div.textContent = prefix + text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  appendMessage('user', msg);
+  input.value = '';
+  input.disabled = true;
+  document.getElementById('btn-send').disabled = true;
+
+  try {
+    const resp = await fetch(API_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Authorization': currentJWT},
+      body: JSON.stringify({message: msg, session_id: sessionId}),
+    });
+    const data = await resp.json();
+    if (!resp.ok) {
+      appendMessage('sys', 'HTTP ' + resp.status + ': ' + (data.message || data.error || JSON.stringify(data)));
+    } else {
+      appendMessage('bot', data.response || '(빈 응답)');
+    }
+  } catch (e) {
+    appendMessage('sys', '네트워크 에러: ' + e.message);
+  } finally {
+    input.disabled = false;
+    document.getElementById('btn-send').disabled = false;
+    input.focus();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('chat-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+});
+</script>
+</body>
+</html>

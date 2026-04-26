@@ -1,0 +1,2 @@
+제공 파일: chal (32-bit ELF), libc.so.6, Dockerfile 참고용.
+NX enabled, PIE disabled, canary 없음.

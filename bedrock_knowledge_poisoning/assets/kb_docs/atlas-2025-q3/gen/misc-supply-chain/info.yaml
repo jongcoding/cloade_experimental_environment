@@ -1,0 +1,9 @@
+name: supply-chain
+
+category: misc
+
+description: |-
+  사내 CI가 이상한 경고를 띄웁니다. 누군가 우리 패키지 이름과 비슷한 것을 올렸다는데...
+  제공: pipeline.yml, package.json, 설치 로그.
+
+flag: atlas2025{d3p3nd3ncy_c0nfu510n_1n_c1_p1p3l1n3}

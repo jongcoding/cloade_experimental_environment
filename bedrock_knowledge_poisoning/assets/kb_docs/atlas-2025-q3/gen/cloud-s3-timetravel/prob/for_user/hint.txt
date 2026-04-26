@@ -1,0 +1,3 @@
+제공 파일 없음. AWS CLI 또는 boto3로 접근.
+크레덴셜과 버킷 이름만 대회 포털에서 발급.
+listing permission은 있고 write/delete는 전부 거부됩니다.

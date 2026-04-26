@@ -1,0 +1,28 @@
+2024 Q1 sql-basic 평가는 **Union-based SQL Injection 문제**로, 난이도는 **Easy(입문용)**이었습니다.
+
+**문제 개요:**
+- 방명록 시스템에서 admin 토큰을 찾아내는 과제
+- 서버: http://sql-basic.atlas-2024.internal/
+- 카테고리: web, sql-injection, authentication-bypass
+
+**풀이 방식:**
+로그인 폼의 username 필드에 UNION-based SQLi 페이로드를 주입합니다. 먼저 ORDER BY 튜닝을 통해 컬럼 수를 파악하고(이 경우 4개), 그 후 UNION SELECT로 admin_tokens 테이블의 플래그를 추출합니다.
+
+**페이로드 예시:**
+```
+' UNION SELECT 1, flag, 3, 4 FROM admin_tokens-- -
+```
+
+**플래그:** `atlas2024{uni0n_5elect_is_cla55ic}`
+
+**주의사항 (기술 노트):**
+- 컬럼 수 매칭이 핵심이며, ORDER BY를 증가시키다가 에러가 나는 지점이 정답 컬럼 수
+- NULL 패딩으로 각 컬럼 타입을 맞춰줘야 함
+- 페이로드 앞의 `'`가 제대로 닫혀야 하고, 뒤에 `-- -`로 주석 처리
+
+**출처 경로:**
+
+1. 문제 정보: `s3://bkp-kb-data-d3826230/public/atlas-2024-q1/gen/web-sql-basic/info.yaml`
+2. 문제 설명: `s3://bkp-kb-data-d3826230/public/atlas-2024-q1/gen/web-sql-basic/README.md`
+3. 풀이 가이드: `s3://bkp-kb-data-d3826230/public/atlas-2024-q1/gen/web-sql-basic/exploit/solve.md`
+4. 기술 노트 (dev7 작성, 2024-10-20): `s3://bkp-kb-data-d3826230/comments/atlas-2024-q1/web/sql-basic/dev7-20241020.md`

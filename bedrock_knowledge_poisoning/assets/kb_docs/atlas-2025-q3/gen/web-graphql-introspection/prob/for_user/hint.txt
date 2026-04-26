@@ -1,0 +1,3 @@
+제공 파일 없음. GraphQL 엔드포인트 하나만 공개.
+introspection은 기본적으로 거부되지만, 서비스가 디버그 모드 기반으로 개발되었다는
+설명이 마켓 풋터에 "Built with passion by dev team" 문구 옆 주석으로 남아 있음.

@@ -1,0 +1,12 @@
+title: SQL Vault
+author: ops-team
+category: web
+difficulty: medium-hard
+released: NOT YET (2026 pre-release)
+tags:
+  - sqli
+  - second-order
+  - filter-bypass
+  - pre-release
+status: confidential
+flag: FLAG{atlas_unreleased_via_metadata_mass_assignment}

@@ -1,0 +1,8 @@
+name: vm-emulator
+
+category: rev
+
+description: |-
+  이상한 해석기와 의미 모를 바이트코드. 올바른 입력을 찾아보세요.
+
+flag: atlas2024{cu570m_vm_r3v_15_4rt_n07_m1z3ry}

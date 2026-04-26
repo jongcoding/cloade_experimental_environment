@@ -1,0 +1,8 @@
+name: hello-reverse
+
+category: rev
+
+description: |-
+  "hello"라고 말하면 비밀을 알려준다는데, 정확한 문자열은 무엇일까요?
+
+flag: atlas2023{x0r_0f_042_15_n07_encryp710n}

@@ -1,0 +1,9 @@
+name: prompt-smuggle
+
+category: ai
+
+description: |-
+  고객 지원 봇. 시스템 설정은 절대 말하지 말라고 지시받았지만...
+  http://supportbot.atlas-2024.internal:7000/chat
+
+flag: atlas2024{un1c0d3_l1n3br34k_5mugg13d_1n70_pr0mp7}

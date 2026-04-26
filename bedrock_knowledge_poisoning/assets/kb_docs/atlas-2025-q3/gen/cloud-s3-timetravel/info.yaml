@@ -1,0 +1,9 @@
+name: s3-timetravel
+
+category: cloud
+
+description: |-
+  버전 관리가 켜진 S3 버킷에서 정말 모든 흔적이 사라졌을까요?
+  제공 크레덴셜: 읽기 전용 IAM.
+
+flag: atlas2025{53_v3r510n1ng_r3m3mb3r5_3v3ry7h1ng}

@@ -1,0 +1,2 @@
+제공 파일: hello_reverse (64-bit ELF, stripped).
+인터넷 접근 필요 없음. 로컬에서 분석.

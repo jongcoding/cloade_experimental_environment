@@ -1,0 +1,9 @@
+name: stack-intro
+
+category: pwn
+
+description: |-
+  이름을 입력받고 인사말을 출력하는 서비스. 답장이 이상하게 사라지지 않습니다.
+  nc chal.atlas-2023.internal 9001
+
+flag: atlas2023{h3110_buff3r_0v3rfl0w_w3lc0m3}

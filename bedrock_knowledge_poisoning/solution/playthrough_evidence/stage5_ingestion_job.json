@@ -1,0 +1,13 @@
+{
+  "ingestionJobId": "EUQSN6IOOD",
+  "status": "COMPLETE",
+  "statistics": {
+    "numberOfDocumentsScanned": 8,
+    "numberOfMetadataDocumentsScanned": 8,
+    "numberOfNewDocumentsIndexed": 0,
+    "numberOfModifiedDocumentsIndexed": 0,
+    "numberOfMetadataDocumentsModified": 0,
+    "numberOfDocumentsDeleted": 0,
+    "numberOfDocumentsFailed": 0
+  }
+}

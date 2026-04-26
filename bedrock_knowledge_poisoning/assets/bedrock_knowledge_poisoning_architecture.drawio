@@ -1,0 +1,185 @@
+<mxfile host="app.diagrams.net" modified="2026-04-26T05:00:00.000Z" agent="Cursor" version="26.0.11" type="device">
+  <diagram id="atlas_v10" name="Atlas Tech v10 — Metadata Mass Assignment">
+    <mxGraphModel adaptiveColors="auto" background="#ffffff" dx="2200" dy="1500" grid="0" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1" pageHeight="1" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;Atlas Tech 사내 위키 — v10 Metadata Mass Assignment&lt;/b&gt;" style="text;html=1;fontSize=42;fontStyle=1;fontColor=#232F3E;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="200" y="0" width="2000" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="cognito:groups → agent routing  ·  KB audience filter  ·  ADD_COMMENT(audience=admin) mass assignment  ·  archive auto-publish" style="text;html=1;fontSize=26;fontColor=#666666;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="200" y="55" width="2000" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- AWS Cloud container -->
+        <mxCell id="aws_cloud" value="AWS Cloud (us-east-1)" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=42;fontStyle=1;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_cloud_alt;strokeColor=#232F3E;fillColor=none;verticalAlign=top;align=left;spacingLeft=12;fontColor=#232F3E;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="200" y="120" width="2000" height="1500" as="geometry" />
+        </mxCell>
+
+        <!-- Frontend lane -->
+        <mxCell id="lane_front" value="Frontend / Auth" style="points=[];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=32;fontStyle=1;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;strokeColor=#147EBA;fillColor=#E6F2F8;verticalAlign=top;align=left;spacingLeft=10;fontColor=#147EBA;dashed=0;" vertex="1" parent="aws_cloud">
+          <mxGeometry x="20" y="40" width="1960" height="280" as="geometry" />
+        </mxCell>
+
+        <!-- Application lane -->
+        <mxCell id="lane_app" value="Application Layer" style="points=[];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=32;fontStyle=1;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;strokeColor=#01A88D;fillColor=#E6F6F2;verticalAlign=top;align=left;spacingLeft=10;fontColor=#01A88D;dashed=0;" vertex="1" parent="aws_cloud">
+          <mxGeometry x="20" y="340" width="1960" height="660" as="geometry" />
+        </mxCell>
+
+        <!-- Data lane -->
+        <mxCell id="lane_data" value="Data Layer" style="points=[];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=32;fontStyle=1;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;strokeColor=#7AA116;fillColor=#F2F8E6;verticalAlign=top;align=left;spacingLeft=10;fontColor=#7AA116;dashed=0;" vertex="1" parent="aws_cloud">
+          <mxGeometry x="20" y="1020" width="1960" height="450" as="geometry" />
+        </mxCell>
+
+        <!-- Solver actor -->
+        <mxCell id="user" value="&lt;b&gt;Atlas Engineer&lt;/b&gt;&lt;br&gt;(employee, attacker)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=28;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.users;" vertex="1" parent="1">
+          <mxGeometry x="60" y="240" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Frontend resources -->
+        <mxCell id="s3_web" value="&lt;b&gt;S3 Web UI&lt;/b&gt;&lt;br&gt;static SPA" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#7AA116;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=28;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.bucket;" vertex="1" parent="lane_front">
+          <mxGeometry x="60" y="80" width="70" height="74" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cognito" value="&lt;b&gt;Cognito&lt;/b&gt;&lt;br&gt;User Pool + admin group&lt;br&gt;cognito:groups claim" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=28;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;" vertex="1" parent="lane_front">
+          <mxGeometry x="380" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="apigw" value="&lt;b&gt;API Gateway&lt;/b&gt;&lt;br&gt;POST /chat&lt;br&gt;(JWT authorizer)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=28;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="lane_front">
+          <mxGeometry x="800" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="autoconfirm" value="&lt;b&gt;Lambda&lt;/b&gt;&lt;br&gt;auto_confirm&lt;br&gt;(self-signup auto OK)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=28;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="lane_front">
+          <mxGeometry x="600" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Application layer: webapp_backend, two agents, two action lambdas -->
+        <mxCell id="webapp" value="&lt;b&gt;Lambda&lt;/b&gt;&lt;br&gt;webapp_backend&lt;br&gt;cognito:groups → agent_id&lt;br&gt;injects audience filter" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=28;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="lane_app">
+          <mxGeometry x="100" y="100" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="emp_agent" value="&lt;b&gt;Bedrock Agent&lt;/b&gt;&lt;br&gt;employee_agent&lt;br&gt;Tools: SEARCH_KB, ADD_COMMENT&lt;br&gt;audience IN [public, employee]" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=24;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="lane_app">
+          <mxGeometry x="540" y="40" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="adm_agent" value="&lt;b&gt;Bedrock Agent&lt;/b&gt;&lt;br&gt;admin_agent&lt;br&gt;Tools: SEARCH_KB, ADD_COMMENT, GET_ATLAS_REFERENCE&lt;br&gt;audience IN [public, employee, admin]" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=24;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="lane_app">
+          <mxGeometry x="540" y="280" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="guardrail" value="&lt;b&gt;Bedrock Guardrail&lt;/b&gt;&lt;br&gt;PROMPT_ATTACK HIGH (decoy A)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=24;fontColor=#232F3E;strokeWidth=2;" vertex="1" parent="lane_app">
+          <mxGeometry x="510" y="495" width="280" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="inventory_lambda" value="&lt;b&gt;Lambda&lt;/b&gt;&lt;br&gt;inventory&lt;br&gt;SEARCH_KB / ADD_COMMENT / GET_SYSTEM_INFO" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=24;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="lane_app">
+          <mxGeometry x="1180" y="40" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="adminops_lambda" value="&lt;b&gt;Lambda&lt;/b&gt;&lt;br&gt;admin_ops&lt;br&gt;GET_ATLAS_REFERENCE&lt;br&gt;(role gate: user_role==admin)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=24;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="lane_app">
+          <mxGeometry x="1180" y="280" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Data layer -->
+        <mxCell id="kb" value="&lt;b&gt;Bedrock KB&lt;/b&gt;&lt;br&gt;single KB shared by both agents&lt;br&gt;3 indexed prefixes" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=24;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="lane_data">
+          <mxGeometry x="120" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="opensearch" value="&lt;b&gt;OpenSearch&lt;/b&gt;&lt;br&gt;Serverless&lt;br&gt;vector store" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=24;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elasticsearch_service;" vertex="1" parent="lane_data">
+          <mxGeometry x="120" y="280" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- S3 with prefixes panel -->
+        <mxCell id="s3_kb_data" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#7AA116;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=24;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.bucket;" vertex="1" parent="lane_data">
+          <mxGeometry x="540" y="80" width="80" height="84" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s3_label" value="&lt;b&gt;S3 kb_data&lt;/b&gt;&lt;br&gt;(audience metadata via .metadata.json sidecars)" style="text;html=1;align=center;verticalAlign=top;fontSize=22;fontColor=#232F3E;" vertex="1" parent="lane_data">
+          <mxGeometry x="450" y="170" width="270" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="prefix_public" value="&lt;b&gt;public/&lt;/b&gt;&lt;br&gt;atlas-2023-q2 / 2024-q1 / 2025-q3 / atlas-ops&lt;br&gt;audience=public  ·  KB indexed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F8E6;strokeColor=#7AA116;fontSize=22;fontColor=#232F3E;strokeWidth=2;" vertex="1" parent="lane_data">
+          <mxGeometry x="780" y="20" width="430" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="prefix_comments" value="&lt;b&gt;comments/&lt;/b&gt;&lt;br&gt;ADD_COMMENT writes here  ·  audience from user input  ·  KB indexed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3CC;strokeColor=#d6b656;fontSize=22;fontColor=#232F3E;strokeWidth=2;" vertex="1" parent="lane_data">
+          <mxGeometry x="780" y="100" width="430" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="prefix_archive" value="&lt;b&gt;archive/qna/&lt;/b&gt;&lt;br&gt;auto-archive of every chat answer  ·  audience=public (forced)  ·  KB indexed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F2F8;strokeColor=#147EBA;fontSize=22;fontColor=#232F3E;strokeWidth=2;" vertex="1" parent="lane_data">
+          <mxGeometry x="780" y="180" width="430" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="prefix_admin" value="&lt;b&gt;admin-only/&lt;/b&gt;  atlas-2026-q2-unreleased&lt;br&gt;NOT bound to any KB data source&lt;br&gt;reachable only via GET_ATLAS_REFERENCE&lt;br&gt;&lt;b&gt;FLAG{atlas_unreleased_via_metadata_mass_assignment}&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#b85450;fontSize=22;fontColor=#232F3E;strokeWidth=3;" vertex="1" parent="lane_data">
+          <mxGeometry x="780" y="260" width="430" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Bedrock Flow decoy -->
+        <mxCell id="flow_decoy" value="&lt;b&gt;Bedrock Flow&lt;/b&gt;&lt;br&gt;atlas-admin-router&lt;br&gt;Condition (== exact match)&lt;br&gt;decoy E" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=22;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;opacity=50;" vertex="1" parent="lane_data">
+          <mxGeometry x="1700" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ============== EDGES ============== -->
+
+        <!-- 0: signup + login -->
+        <mxCell id="e_user_web" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#545B64;strokeWidth=2;" edge="1" parent="1" source="user" target="s3_web"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_web_cog" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#545B64;strokeWidth=2;" edge="1" parent="1" source="s3_web" target="cognito"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_cog_auto" value="&lt;b&gt;Stage 0 auto-confirm&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=2;fontSize=22;fontColor=#b85450;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cognito" target="autoconfirm"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_cog_api" value="&lt;b&gt;JWT (cognito:groups)&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#545B64;strokeWidth=2;fontSize=22;fontColor=#545B64;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cognito" target="apigw"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_api_webapp" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#545B64;strokeWidth=2;" edge="1" parent="1" source="apigw" target="webapp"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- 1: webapp routes by group -->
+        <mxCell id="e_webapp_emp" value="&lt;b&gt;default → employee_agent&lt;br&gt;audience filter [public, employee]&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#147EBA;strokeWidth=3;fontSize=22;fontColor=#147EBA;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="webapp" target="emp_agent"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_webapp_adm" value="&lt;b&gt;cognito:groups contains admin&lt;br&gt;→ admin_agent&lt;br&gt;audience filter [public, employee, admin]&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#01A88D;strokeWidth=3;fontSize=22;fontColor=#01A88D;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="webapp" target="adm_agent"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- 2: agents call inventory + admin_ops + KB -->
+        <mxCell id="e_emp_inv" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#545B64;strokeWidth=2;" edge="1" parent="1" source="emp_agent" target="inventory_lambda"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_adm_inv" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#545B64;strokeWidth=2;" edge="1" parent="1" source="adm_agent" target="inventory_lambda"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_adm_admops" value="&lt;b&gt;admin only&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=3;fontSize=22;fontColor=#b85450;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="adm_agent" target="adminops_lambda"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- both agents to KB -->
+        <mxCell id="e_emp_kb" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#01A88D;strokeWidth=2;" edge="1" parent="1" source="emp_agent" target="kb"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_adm_kb" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#01A88D;strokeWidth=2;" edge="1" parent="1" source="adm_agent" target="kb"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- 3: ADD_COMMENT mass assignment -->
+        <mxCell id="e_inv_comments" value="&lt;b&gt;Stage 2  ADD_COMMENT(audience=admin)&lt;br&gt;writes body.md + body.md.metadata.json&lt;br&gt;mass assignment — no validation&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#d79b00;strokeWidth=4;dashed=1;dashPattern=8 4;fontSize=22;fontColor=#d79b00;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="inventory_lambda" target="prefix_comments"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- 4: admin_ops to admin-only/ -->
+        <mxCell id="e_admops_admonly" value="&lt;b&gt;Stage 4  s3:GetObject&lt;br&gt;admin-only/.../README.md&lt;br&gt;→ flag in agent answer&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=4;fontSize=22;fontColor=#b85450;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="adminops_lambda" target="prefix_admin"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- 5: webapp_backend auto archive -->
+        <mxCell id="e_webapp_archive" value="&lt;b&gt;Stage 5  archive_qna(audience=public)&lt;br&gt;auto-publish answer (with flag)&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#d79b00;strokeWidth=4;dashed=1;dashPattern=8 4;fontSize=22;fontColor=#d79b00;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="webapp" target="prefix_archive"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- 6: ingestion S3 → KB (publish) -->
+        <mxCell id="e_s3_kb" value="&lt;b&gt;StartIngestionJob (per data source)&lt;br&gt;~35s vector embedding refresh&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#7AA116;strokeWidth=2;fontSize=22;fontColor=#7AA116;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="s3_kb_data" target="kb"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e_kb_oss" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#7AA116;strokeWidth=2;" edge="1" parent="1" source="kb" target="opensearch"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- guardrail block (decoy) -->
+        <mxCell id="e_guard_emp" value="&lt;b&gt;direct prompt injection blocked&lt;br&gt;(decoy A)&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=cross;endFill=0;strokeColor=#b85450;strokeWidth=2;dashed=1;dashPattern=4 4;fontSize=22;fontColor=#b85450;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="guardrail" target="emp_agent"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Stage path overlay: poisoned retrieval into admin agent -->
+        <mxCell id="e_kb_adm" value="&lt;b&gt;Stage 4  retrieve(audience IN [public,employee,admin])&lt;br&gt;injected admin-scope note hits admin_agent context&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#d79b00;strokeWidth=3;dashed=1;dashPattern=8 4;fontSize=22;fontColor=#d79b00;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="kb" target="adm_agent"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Stage 6 path: employee retrieves archive -->
+        <mxCell id="e_kb_emp_arch" value="&lt;b&gt;Stage 6  employee SEARCH_KB(archive)&lt;br&gt;audience=public scope → flag recovery&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;html=1;endArrow=block;endFill=1;strokeColor=#147EBA;strokeWidth=3;dashed=1;dashPattern=8 4;fontSize=22;fontColor=#147EBA;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="kb" target="emp_agent"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="1640" width="1960" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_title" value="&lt;b&gt;Legend &amp; Stage Map&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontSize=26;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="240" y="1650" width="400" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_normal_arrow" value="" style="endArrow=block;endFill=1;strokeColor=#545B64;strokeWidth=2;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="250" y="1710" as="sourcePoint" /><mxPoint x="350" y="1710" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="leg_normal_text" value="Normal request flow (signup, login, /chat)" style="text;html=1;align=left;verticalAlign=middle;fontSize=22;fontColor=#545B64;" vertex="1" parent="1"><mxGeometry x="370" y="1690" width="600" height="40" as="geometry" /></mxCell>
+        <mxCell id="leg_route_arrow" value="" style="endArrow=block;endFill=1;strokeColor=#01A88D;strokeWidth=3;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="250" y="1750" as="sourcePoint" /><mxPoint x="350" y="1750" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="leg_route_text" value="Group-based agent routing (cognito:groups → employee_agent / admin_agent)" style="text;html=1;align=left;verticalAlign=middle;fontSize=22;fontColor=#01A88D;" vertex="1" parent="1"><mxGeometry x="370" y="1730" width="900" height="40" as="geometry" /></mxCell>
+        <mxCell id="leg_poison_arrow" value="" style="endArrow=block;endFill=1;strokeColor=#d79b00;strokeWidth=4;dashed=1;dashPattern=8 4;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="250" y="1790" as="sourcePoint" /><mxPoint x="350" y="1790" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="leg_poison_text" value="Poisoning / archive auto-publish (Stage 2 mass assignment, Stage 4 retrieve, Stage 5 archive)" style="text;html=1;align=left;verticalAlign=middle;fontSize=22;fontColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="370" y="1770" width="1300" height="40" as="geometry" /></mxCell>
+        <mxCell id="leg_attack_arrow" value="" style="endArrow=block;endFill=1;strokeColor=#b85450;strokeWidth=4;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="250" y="1830" as="sourcePoint" /><mxPoint x="350" y="1830" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="leg_attack_text" value="Privileged path that the solver tricks the admin agent into exercising (admin_ops → admin-only/.../FLAG)" style="text;html=1;align=left;verticalAlign=middle;fontSize=22;fontColor=#b85450;" vertex="1" parent="1"><mxGeometry x="370" y="1810" width="1500" height="40" as="geometry" /></mxCell>
+        <mxCell id="leg_block_arrow" value="" style="endArrow=cross;endFill=0;strokeColor=#b85450;strokeWidth=2;dashed=1;dashPattern=4 4;html=1;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="250" y="1870" as="sourcePoint" /><mxPoint x="350" y="1870" as="targetPoint" /></mxGeometry></mxCell>
+        <mxCell id="leg_block_text" value="Decoy / blocked path (Guardrail PROMPT_ATTACK, KB miss on admin-only/, employee tool absence)" style="text;html=1;align=left;verticalAlign=middle;fontSize=22;fontColor=#b85450;" vertex="1" parent="1"><mxGeometry x="370" y="1850" width="1500" height="40" as="geometry" /></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

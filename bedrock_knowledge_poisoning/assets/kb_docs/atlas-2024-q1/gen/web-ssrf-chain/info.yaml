@@ -1,0 +1,9 @@
+name: ssrf-chain
+
+category: web
+
+description: |-
+  북마크 썸네일 생성 서비스. 어떤 URL이든 대신 fetch 해 드립니다.
+  http://thumb.atlas-2024.internal:8000
+
+flag: atlas2024{55rf_ch41n5_4r3_n07_ju57_4_m3m3}

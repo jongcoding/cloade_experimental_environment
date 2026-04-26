@@ -1,0 +1,13 @@
+{
+  "ingestionJobId": "V3HDEJIAGQ",
+  "status": "COMPLETE",
+  "statistics": {
+    "numberOfDocumentsScanned": 7,
+    "numberOfMetadataDocumentsScanned": 7,
+    "numberOfNewDocumentsIndexed": 0,
+    "numberOfModifiedDocumentsIndexed": 0,
+    "numberOfMetadataDocumentsModified": 0,
+    "numberOfDocumentsDeleted": 0,
+    "numberOfDocumentsFailed": 0
+  }
+}

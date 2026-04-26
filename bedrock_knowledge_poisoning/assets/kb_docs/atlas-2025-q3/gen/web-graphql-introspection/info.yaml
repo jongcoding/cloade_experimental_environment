@@ -1,0 +1,9 @@
+name: graphql-introspection
+
+category: web
+
+description: |-
+  신상 마켓플레이스 GraphQL API. 문서는 닫혔지만 디버그 흔적은 남아있지 않을까요?
+  http://market.atlas-2025.internal:4000/graphql
+
+flag: atlas2025{gr4phql_1n7r0sp3c710n_w17h_d3bug_h34d3r}

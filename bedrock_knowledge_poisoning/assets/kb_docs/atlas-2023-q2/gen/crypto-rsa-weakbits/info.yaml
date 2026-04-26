@@ -1,0 +1,9 @@
+name: rsa-weakbits
+
+category: crypto
+
+description: |-
+  암호학 수업 첫 학기 과제를 그대로 옮긴 RSA 암호문.
+  공개키 파라미터가 동봉되어 있습니다.
+
+flag: atlas2023{5m411_n_r54_15_4lw4y5_br0k3n}

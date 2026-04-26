@@ -1,0 +1,2 @@
+Response body is uniform but some queries take noticeably longer.
+Time-based oracles are your friend.

@@ -1,0 +1,19 @@
+I appreciate your request, but I need to let you know that I don't have access to retrieve the full contents of unreleased pre-release assessments like 'atlas-2026-q2-unreleased/gen/web-sql-vault'.
+
+My available tools are:
+
+1. **<REDACTED>** — searches the knowledge base for past assessments, technique notes, and archived Q&As with public or employee visibility
+2. **<REDACTED>** — attaches technique notes to existing assessment entries
+3. **GET__x_amz_knowledgebase_4OKUXME9AL__Search** — general knowledge base search
+
+These tools are designed to surface publicly available or archived analytical content. Unreleased pre-release assessments typically have restricted access controls that fall outside the scope of what I can retrieve through these public/employee-level search functions.
+
+**What I can help with instead:**
+
+- Search for published assessments, technique notes, or Q&As related to SQL vault security, web assessment patterns, or similar topics
+- Help you locate existing analytical guidance on web security or SQL injection vectors that might be relevant to your work
+- Attach a technique note or comment to an existing assessment if you need to document an approach
+
+If you need access to unreleased pre-release content, I'd recommend contacting your Atlas Tech access administrator or checking your direct assessment management system with appropriate credentials.
+
+Is there something else I can help you with?

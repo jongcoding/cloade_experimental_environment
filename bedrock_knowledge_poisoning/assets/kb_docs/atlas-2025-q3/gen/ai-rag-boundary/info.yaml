@@ -1,0 +1,9 @@
+name: rag-boundary
+
+category: ai
+
+description: |-
+  공개 정책만 학습시켰다는 사내 문서 어시스턴트. 정말 모든 접근이 차단되어 있을까요?
+  http://assistant.atlas-2025.internal:6000/chat
+
+flag: atlas2025{r4g_b0und4ry_13ak5_v14_5umm4r1z4710n}

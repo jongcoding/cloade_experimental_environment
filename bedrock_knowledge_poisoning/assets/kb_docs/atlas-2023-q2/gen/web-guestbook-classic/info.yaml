@@ -1,0 +1,9 @@
+name: guestbook-classic
+
+category: web
+
+description: |-
+  옛날 감성 그대로의 방명록 서비스. 관리자 노트는 정말 관리자만 볼 수 있을까요?
+  http://guestbook.atlas-2023.internal:8080
+
+flag: atlas2023{s70r3d_x55_4nd_1d0r_51ll_frenz}

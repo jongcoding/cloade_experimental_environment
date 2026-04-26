@@ -1,0 +1,10 @@
+title: SQL Basic
+author: dev7
+category: web
+difficulty: easy
+released: 2024-10-15
+tags:
+  - sqli
+  - union-based
+  - auth-bypass
+flag: atlas2024{uni0n_5elect_is_cla55ic}

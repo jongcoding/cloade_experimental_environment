@@ -1,0 +1,8 @@
+{
+  "flag": "FLAG{atlas_unreleased_via_metadata_mass_assignment}",
+  "expected": "FLAG{atlas_unreleased_via_metadata_mass_assignment}",
+  "match": true,
+  "admin_groups": [
+    "admin"
+  ]
+}

@@ -1,0 +1,2 @@
+제공 파일: pipeline.yml, package.json, install.log, sbom.json.
+네트워크 접근 불필요. 로컬에서 파일 분석만으로 해결.

@@ -1,0 +1,2 @@
+제공 파일: chal (64-bit ELF), libc-2.35.so, ld-2.35.so.
+ASLR / NX / Partial RELRO. Canary 있음.

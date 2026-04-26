@@ -1,0 +1,11 @@
+title: Blind SQLi
+author: dev11
+category: web
+difficulty: medium
+released: 2024-11-01
+tags:
+  - sqli
+  - blind
+  - time-based
+  - automation
+flag: atlas2024{51eepy_b1ind_attacker}
