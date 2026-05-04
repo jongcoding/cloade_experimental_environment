@@ -1,9 +1,13 @@
 # ===================================================================
-# Outputs (v10 — Atlas Tech Knowledge Poisoning)
+# Outputs (v11 — Atlas Tech Knowledge Poisoning, IAM Drift)
 #
-# Non-sensitive: API URL, web UI URL, Cognito IDs, region, scenario_id.
-# Sensitive (validation/regression use only): KB ID, agent IDs, kb_data
-# bucket, seed admin credentials.
+# Public outputs (recon-discoverable): API URL, web UI URL, Cognito User
+#   Pool / Client / Identity Pool IDs, region, scenario_id, agent IDs and
+#   alias IDs. The agent IDs/aliases are not secrets — Stage 1 design
+#   relies on them being recoverable from the SPA bundle.
+#
+# Sensitive outputs (validation/regression only): kb_data bucket, KB ID,
+#   federated role ARNs, seed admin credentials.
 # ===================================================================
 
 output "api_url" {
@@ -26,6 +30,31 @@ output "cognito_client_id" {
   value       = aws_cognito_user_pool_client.main.id
 }
 
+output "cognito_identity_pool_id" {
+  description = "Cognito Identity Pool ID (User Pool JWT -> federated AWS creds exchange)"
+  value       = aws_cognito_identity_pool.main.id
+}
+
+output "employee_agent_id" {
+  description = "employee_agent Bedrock Agent ID (recon-discoverable)"
+  value       = aws_bedrockagent_agent.employee_agent.agent_id
+}
+
+output "admin_agent_id" {
+  description = "admin_agent Bedrock Agent ID (recon-discoverable)"
+  value       = aws_bedrockagent_agent.admin_agent.agent_id
+}
+
+output "employee_agent_alias_id" {
+  description = "employee_agent alias ID used by webapp_backend (recon-discoverable)"
+  value       = local.agent_alias_id
+}
+
+output "admin_agent_alias_id" {
+  description = "admin_agent alias ID used by webapp_backend (recon-discoverable)"
+  value       = local.agent_alias_id
+}
+
 output "region" {
   description = "AWS Region"
   value       = "us-east-1"
@@ -36,7 +65,7 @@ output "scenario_id" {
   value       = local.cg_id
 }
 
-# --- Internal outputs (all sensitive, regression/validation only) ---
+# --- Internal outputs (validation/regression only) ---
 
 output "knowledge_base_id" {
   description = "Bedrock Knowledge Base ID"
@@ -44,21 +73,21 @@ output "knowledge_base_id" {
   sensitive   = true
 }
 
-output "employee_agent_id" {
-  description = "employee_agent Bedrock Agent ID"
-  value       = aws_bedrockagent_agent.employee_agent.agent_id
-  sensitive   = true
-}
-
-output "admin_agent_id" {
-  description = "admin_agent Bedrock Agent ID"
-  value       = aws_bedrockagent_agent.admin_agent.agent_id
-  sensitive   = true
-}
-
 output "kb_data_bucket" {
-  description = "S3 bucket containing KB documents (public/, comments/, archive/, admin-only/)"
+  description = "S3 bucket containing KB documents (public/, admin-only/)"
   value       = aws_s3_bucket.kb_data.id
+  sensitive   = true
+}
+
+output "atlas_employee_federated_role_arn" {
+  description = "Cognito Identity Pool authenticated role ARN (v11 IAM drift target)"
+  value       = aws_iam_role.atlas_employee_federated.arn
+  sensitive   = true
+}
+
+output "atlas_unauthenticated_federated_role_arn" {
+  description = "Cognito Identity Pool unauthenticated role ARN"
+  value       = aws_iam_role.atlas_unauthenticated_federated.arn
   sensitive   = true
 }
 

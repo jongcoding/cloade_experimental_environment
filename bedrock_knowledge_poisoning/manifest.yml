@@ -6,25 +6,41 @@
 - author: Cloud Attack Lab
 
 # The version of the scenario, where major versions are breaking changes and minor are small fixes.
-- version: 10.0.0
+- version: 11.0.0
 
 # Text displayed to the user when they type "{{ scenario_name }} help"
 - help: |
-        Atlas Tech 사내 SaaS 위키 챗봇 (Cognito + API Gateway + Bedrock Agent x2 +
-        같은 KB 공유) 에 사원으로 들어가 ADD_COMMENT 도구의 audience 파라미터를
-        admin 으로 박는 mass assignment 결함을 통해 admin 전용 retrieve 채널을
-        만든다. 보안팀의 평범한 검색 쿼리에 그 댓글이 끼어들어 admin LLM 이
-        미공개 평가서 도구 (GET_ATLAS_REFERENCE) 를 자발 호출, 답변에 flag 가
-        포함되고 챗봇 백엔드가 답변을 archive/qna/ 로 자동 저장 (audience=public)
-        하면 사원이 자기 권한으로 검색해 회수.
+        Atlas Tech 사내 위키 SPA (S3 정적 호스팅 + Cognito User Pool + Cognito
+        Identity Pool federated AWS creds + Bedrock Agent x2 같은 KB 공유) 에
+        신규 입사자로 자유 가입한 뒤, AWS Amplify 표준 패턴인 Identity Pool
+        credential 교환으로 federated employee role 의 임시 자격증명을 받는다.
+        그 role 의 bedrock:InvokeAgent Resource 가 의도(employee_agent alias) 보다
+        넓게 agent-alias/* wildcard 로 admin_agent alias 까지 포섭되어 있어,
+        webapp_backend Lambda 의 cognito:groups 분기 (server-side authz) 를
+        IAM 레이어에서 통째 우회해 boto3 invoke_agent 로 admin_agent 를 직접
+        호출한다. admin_ops Lambda 의 sessionAttributes.user_role 게이트는
+        webapp_backend 가 stamp 해줄 거란 가정으로 caller-supplied
+        sessionState.sessionAttributes 를 검증 없이 신뢰하므로, 직접 호출 시
+        sessionAttributes={user_role:'admin'} 를 그대로 박아 넣으면 admin_agent
+        가 자기 권한으로 GET_ATLAS_REFERENCE 를 자발 호출 → admin-only/ S3 →
+        미공개 평가서 본문 (flag 포함) 을 답변 텍스트에 회수.
 
-        Initial entry: Cognito self-signup -> employee JWT (cognito:groups=[])
-        Attack vector: KB metadata sidecar mass assignment + indirect prompt
-        injection via RAG retrieval + auto-archive sanitize gap
-        Final objective: FLAG{atlas_unreleased_via_metadata_mass_assignment}
+        Initial entry: Cognito self-signup -> User Pool IdToken (cognito:groups=[])
+        Pivot: User Pool JWT -> Cognito Identity Pool federated AWS creds
+                (atlas_employee_federated role 임시 자격증명)
+        Privilege escalation: federated role 의 bedrock:InvokeAgent Resource
+                wildcard (agent-alias/*) 가 admin_agent alias 까지 포섭 +
+                admin_ops Lambda 의 sessionAttributes 신뢰 결함 (caller 가
+                user_role='admin' 을 자유 위조)
+        Final objective: FLAG{atlas_unreleased_via_invoke_agent_iam_drift}
                          (admin-only/atlas-2026-q2-unreleased/gen/web-sql-vault/
                           README.md 본문에 박혀 있음, 풀이자에게 직접
-                          GetObject 권한은 처음부터 끝까지 없음)
+                          GetObject / Lambda Invoke / AssumeRole 권한은
+                          처음부터 끝까지 없음)
+
+        Pattern: OWASP API1:2023 Broken Object Level Authorization 의 클라우드
+                 변종 (server-side authz 를 가정한 design 이 IAM Resource 열거
+                 실수 + sessionAttributes 신뢰 결함으로 우회됨)
 
 # Records the date upon which this scenario was last updated, in MM-DD-YYYY format
-- last-updated: 04-26-2026
+- last-updated: 04-30-2026

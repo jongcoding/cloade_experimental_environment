@@ -153,3 +153,42 @@ resource "aws_cognito_user_in_group" "seed_admin_in_admin" {
   group_name   = aws_cognito_user_group.admin.name
   username     = aws_cognito_user.seed_admin.username
 }
+
+# ===================================================================
+# Cognito Identity Pool (v11)
+#
+# AWS Amplify standard SPA pattern: User Pool authenticates the user,
+# Identity Pool exchanges the User Pool IdToken for AWS temporary
+# credentials so the SPA can call AWS services directly.
+#
+# v11 chain pivots through this exchange. See iam.tf for the federated
+# role with the IAM Resource enumeration drift on bedrock:InvokeAgent.
+#
+# allow_unauthenticated_identities = false: a User Pool JWT is required
+# before federated AWS creds are issued, so Stage 0 (Cognito self-signup)
+# stays mandatory.
+# ===================================================================
+
+resource "aws_cognito_identity_pool" "main" {
+  identity_pool_name               = "${local.scenario_name}_idp_${local.cg_id}"
+  allow_unauthenticated_identities = false
+
+  cognito_identity_providers {
+    client_id               = aws_cognito_user_pool_client.main.id
+    provider_name           = aws_cognito_user_pool.main.endpoint
+    server_side_token_check = false
+  }
+
+  tags = {
+    Name = "${local.scenario_name}-identity-pool"
+  }
+}
+
+resource "aws_cognito_identity_pool_roles_attachment" "main" {
+  identity_pool_id = aws_cognito_identity_pool.main.id
+
+  roles = {
+    authenticated   = aws_iam_role.atlas_employee_federated.arn
+    unauthenticated = aws_iam_role.atlas_unauthenticated_federated.arn
+  }
+}

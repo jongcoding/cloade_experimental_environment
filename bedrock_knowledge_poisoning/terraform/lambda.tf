@@ -1,7 +1,14 @@
 # ===================================================================
-# Webapp Backend Lambda
+# Webapp Backend Lambda  (v11)
 # Called by API Gateway POST /chat
 # Routes to employee_agent or admin_agent based on cognito:groups claim.
+#
+# v11 changes:
+#   - Removed automatic ARCHIVE_QNA call on every answer.
+#   - Response body simplified to { response, session_id }.
+#   - cognito:groups -> agent routing kept exactly as-is. The interesting
+#     defect lives in IAM (federated role can hit InvokeAgent on either
+#     agent-alias) so this Lambda is left honest on the application path.
 # ===================================================================
 
 data "archive_file" "webapp_backend_zip" {
@@ -12,28 +19,22 @@ data "archive_file" "webapp_backend_zip" {
     content  = <<-PYTHON
 import json
 import os
-import time
-import hashlib
 import traceback
 import boto3
 import uuid
 
 bedrock_runtime = boto3.client('bedrock-agent-runtime', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
-bedrock_agent   = boto3.client('bedrock-agent',         region_name=os.environ.get('AWS_REGION', 'us-east-1'))
-s3              = boto3.client('s3',                    region_name=os.environ.get('AWS_REGION', 'us-east-1'))
 
 
 def handler(event, context):
     """
-    Webapp Backend Lambda -- API Gateway proxy.
-    Routes authenticated chat to the appropriate Bedrock Agent based on
-    the caller's Cognito group membership. Admin users are routed to
-    admin_agent; everyone else is routed to employee_agent.
+    Webapp Backend Lambda -- API Gateway proxy (v11).
 
-    After the Agent returns a completion, the {question, answer} pair is
-    silently archived to s3://$KB_DATA_BUCKET/archive/qna/ and an ingestion
-    job is triggered on the s3_archive data source. ARCHIVE_QNA is not
-    exposed as an Agent tool.
+    Authenticated chat is routed to one of two Bedrock Agents based on the
+    caller's Cognito group membership. Admin users go to admin_agent, all
+    other authenticated users go to employee_agent. The retrieval audience
+    filter is still emitted so audience-tiered KB content (if added back)
+    keeps working without a code change.
     """
     try:
         body = json.loads(event.get('body', '{}'))
@@ -112,11 +113,6 @@ def handler(event, context):
             if 'bytes' in chunk:
                 completion += chunk['bytes'].decode('utf-8')
 
-        try:
-            archive_qna(user_message, completion)
-        except Exception:
-            pass
-
         return response(200, {
             'response':   completion,
             'session_id': session_id,
@@ -127,51 +123,6 @@ def handler(event, context):
             'error': str(e),
             'trace': traceback.format_exc(),
         })
-
-
-def archive_qna(question, answer):
-    """
-    Persist {question, answer} under archive/qna/ with a companion
-    .metadata.json sidecar (audience: public) and trigger ingestion.
-    """
-    bucket = os.environ.get('KB_DATA_BUCKET', '')
-    kb_id  = os.environ.get('KNOWLEDGE_BASE_ID', '')
-    ds_id  = os.environ.get('DS_ID_ARCHIVE', '')
-    if not bucket or not answer:
-        return
-
-    q_hash   = hashlib.sha256((question or '').encode('utf-8')).hexdigest()[:12]
-    date_str = time.strftime('%Y-%m-%d')
-    key      = f'archive/qna/{date_str}-{q_hash}.md'
-
-    doc = (
-        f"# Q&A Archive -- {date_str}\n\n"
-        f"## Question\n{question}\n\n"
-        f"## Answer\n{answer}\n"
-    )
-    s3.put_object(
-        Bucket=bucket,
-        Key=key,
-        Body=doc.encode('utf-8'),
-        ContentType='text/markdown',
-    )
-
-    metadata = json.dumps({'metadataAttributes': {'audience': 'public'}})
-    s3.put_object(
-        Bucket=bucket,
-        Key=key + '.metadata.json',
-        Body=metadata.encode('utf-8'),
-        ContentType='application/json',
-    )
-
-    if kb_id and ds_id:
-        try:
-            bedrock_agent.start_ingestion_job(
-                knowledgeBaseId=kb_id,
-                dataSourceId=ds_id,
-            )
-        except Exception:
-            pass
 
 
 def response(status_code, body):
@@ -205,9 +156,7 @@ resource "aws_lambda_function" "webapp_backend" {
       EMPLOYEE_AGENT_ID   = aws_bedrockagent_agent.employee_agent.agent_id
       ADMIN_AGENT_ID      = aws_bedrockagent_agent.admin_agent.agent_id
       BEDROCK_AGENT_ALIAS = local.agent_alias_id
-      KB_DATA_BUCKET      = aws_s3_bucket.kb_data.id
       KNOWLEDGE_BASE_ID   = aws_bedrockagent_knowledge_base.main.id
-      DS_ID_ARCHIVE       = aws_bedrockagent_data_source.s3_archive.data_source_id
     }
   }
 
@@ -217,14 +166,9 @@ resource "aws_lambda_function" "webapp_backend" {
 }
 
 # ===================================================================
-# InventoryTool Lambda  (v10)
+# InventoryTool Lambda  (v11)
 # Called by Bedrock Agent's InventoryTool Action Group.
-# Tools: SEARCH_KB, ADD_COMMENT, GET_SYSTEM_INFO.
-#
-# ADD_COMMENT accepts a user-supplied audience parameter and writes it
-# directly into the .metadata.json sidecar without validation.
-# This is the intended mass assignment path — audience=admin bypasses
-# the metadata filter that separates employee and admin retrieve scopes.
+# Tool: SEARCH_KB only.  ADD_COMMENT removed.
 # ===================================================================
 
 data "archive_file" "inventory_lambda_zip" {
@@ -235,26 +179,16 @@ data "archive_file" "inventory_lambda_zip" {
     content  = <<-PYTHON
 import json
 import os
-import time
-import uuid
 import traceback
 import boto3
 
-s3                    = boto3.client('s3',                    region_name=os.environ.get('AWS_REGION', 'us-east-1'))
-bedrock_agent         = boto3.client('bedrock-agent',         region_name=os.environ.get('AWS_REGION', 'us-east-1'))
 bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
 
 
 def handler(event, context):
     """
-    Inventory Lambda -- Bedrock Agent Action Group handler (v10).
-    Tool set for the InventoryTool action group:
-      SEARCH_KB       -- retrieve top-N passages from the knowledge base,
-                         audience-filtered by the caller's role
-      ADD_COMMENT     -- write a markdown comment under comments/{path}/
-                         with a companion .metadata.json sidecar; audience
-                         value comes from the request parameter
-      GET_SYSTEM_INFO -- lightweight system introspection
+    Inventory Lambda -- Bedrock Agent Action Group handler (v11).
+    Tool set: SEARCH_KB.
     """
     try:
         return _agent_handler(event, context)
@@ -277,15 +211,11 @@ def _agent_handler(event, context):
 
     if function_name == 'SEARCH_KB':
         return handle_search_kb(event, params, session_attrs)
-    elif function_name == 'ADD_COMMENT':
-        return handle_add_comment(event, params, session_attrs)
-    elif function_name == 'GET_SYSTEM_INFO':
-        return handle_system_info(event, params)
     else:
         return format_response(event, json.dumps({
             'status': 'error',
             'message': f'Unknown function: {function_name}',
-            'available_functions': ['SEARCH_KB', 'ADD_COMMENT', 'GET_SYSTEM_INFO'],
+            'available_functions': ['SEARCH_KB'],
         }))
 
 
@@ -293,12 +223,9 @@ def handle_search_kb(event, params, session_attrs):
     """
     Retrieve top-N relevant passages from the Bedrock Knowledge Base.
 
-    Audience filter is applied based on the caller's role from sessionAttributes.
-    admin role: audience IN [public, employee, admin]
-    employee (default): audience IN [public, employee]
-
-    The KB admin-only/ prefix is not bound to any data source, so
-    atlas-2026-q2-unreleased content never appears in SEARCH_KB results.
+    Audience filter is applied based on the caller's role from
+    sessionAttributes. In v11 only public/ is bound to a data source,
+    so the filter mostly degenerates to ['public'] regardless of role.
     """
     query = params.get('query', '')
     try:
@@ -377,111 +304,6 @@ def handle_search_kb(event, params, session_attrs):
         }))
 
 
-def handle_add_comment(event, params, session_attrs):
-    """
-    Attach a comment to an existing assessment path. The comment is
-    written under comments/{assessment_path}/{author}-{ts}-{uuid}.md
-    in the kb_data bucket. A companion .metadata.json sidecar is
-    written immediately after with the audience value from the request.
-    If audience is not supplied, it defaults to 'public'.
-    Both files are written before ingestion is triggered.
-    """
-    problem_path = (params.get('problem_path') or '').strip()
-    body         = params.get('body') or ''
-    audience     = params.get('audience') or 'public'
-    author       = str(session_attrs.get('user_id', 'unknown'))
-
-    if not problem_path or not body:
-        return format_response(event, json.dumps({
-            'status':  'error',
-            'message': 'problem_path and body are required',
-        }))
-
-    safe_path   = problem_path.strip('/').replace('..', '')
-    safe_author = author.replace('@', '_').replace('/', '_')[:40]
-
-    timestamp = int(time.time())
-    key = f'comments/{safe_path}/{safe_author}-{timestamp}-{uuid.uuid4().hex[:8]}.md'
-
-    doc = (
-        f"# Comment on {problem_path}\n\n"
-        f"Author: {author}\n"
-        f"Posted: {timestamp}\n\n"
-        f"{body}\n"
-    )
-
-    bucket = os.environ.get('KB_DATA_BUCKET', '')
-    kb_id  = os.environ.get('KNOWLEDGE_BASE_ID', '')
-    ds_id  = os.environ.get('DS_ID_COMMENTS', '')
-
-    try:
-        s3.put_object(
-            Bucket=bucket,
-            Key=key,
-            Body=doc.encode('utf-8'),
-            ContentType='text/markdown',
-        )
-    except Exception as e:
-        return format_response(event, json.dumps({
-            'status':  'error',
-            'message': f'Failed to save comment: {str(e)}',
-            'attempted_key': key,
-        }))
-
-    metadata = json.dumps({'metadataAttributes': {'audience': audience}})
-    try:
-        s3.put_object(
-            Bucket=bucket,
-            Key=key + '.metadata.json',
-            Body=metadata.encode('utf-8'),
-            ContentType='application/json',
-        )
-    except Exception as e:
-        pass
-
-    ingestion_triggered = False
-    ingestion_warning   = None
-    if kb_id and ds_id:
-        try:
-            bedrock_agent.start_ingestion_job(
-                knowledgeBaseId=kb_id,
-                dataSourceId=ds_id,
-            )
-            ingestion_triggered = True
-        except Exception as e:
-            ingestion_warning = str(e)
-
-    payload = {
-        'status':              'success',
-        'saved':               True,
-        'key':                 key,
-        'ingestion_triggered': ingestion_triggered,
-    }
-    if ingestion_warning:
-        payload['ingestion_warning'] = ingestion_warning
-
-    return format_response(event, json.dumps(payload))
-
-
-def handle_system_info(event, params):
-    """General system info for employees."""
-    detail_level = (params.get('detail_level') or 'basic').lower()
-    info = {
-        'status':  'operational',
-        'service': 'Atlas Tech Knowledge Assistant',
-        'components': {
-            'knowledge_base': 'healthy',
-            'agent':          'healthy',
-        },
-        'note': 'Use SEARCH_KB to query the assessment archive, ADD_COMMENT to contribute technique notes.',
-    }
-    if detail_level == 'full':
-        info['scenario'] = os.environ.get('SCENARIO_NAME', 'not_configured')
-        info['region']   = os.environ.get('AWS_REGION', 'us-east-1')
-        info['tool_set'] = ['SEARCH_KB', 'ADD_COMMENT', 'GET_SYSTEM_INFO']
-    return format_response(event, json.dumps(info))
-
-
 def format_response(event, body):
     """Build Bedrock Agent Action Group response format."""
     return {
@@ -519,10 +341,7 @@ resource "aws_lambda_function" "inventory" {
       SCENARIO_NAME     = local.scenario_name
       CG_ID             = local.cg_id
       KNOWLEDGE_BASE_ID = aws_bedrockagent_knowledge_base.main.id
-      KB_DATA_BUCKET    = aws_s3_bucket.kb_data.id
       DS_ID_PUBLIC      = aws_bedrockagent_data_source.s3.data_source_id
-      DS_ID_COMMENTS    = aws_bedrockagent_data_source.s3_comments.data_source_id
-      DS_ID_ARCHIVE     = aws_bedrockagent_data_source.s3_archive.data_source_id
     }
   }
 
@@ -548,12 +367,14 @@ resource "aws_lambda_permission" "bedrock_invoke_inventory_admin" {
 }
 
 # ===================================================================
-# AtlasRefOps Lambda  (v10, was ReferenceOps in v9)
-# Called by Bedrock Agent's AtlasRefOps Action Group.
-# GET_ATLAS_REFERENCE(problem_id) flow:
-#   1. Gate: sessionAttributes.user_role == 'admin' (employees rejected)
-#   2. Direct s3:GetObject on $KB_DATA_BUCKET/admin-only/{problem_id}/README.md
-#   3. Return README body (which contains the flag) in the response
+# AtlasRefOps Lambda  (v11, unchanged from v10)
+# Called by Bedrock Agent's AtlasRefOps Action Group on admin_agent.
+#
+# Note: this Lambda still trusts sessionAttributes.user_role for the
+# admin gate. A direct InvokeAgent (Stage 5) hits admin_agent without
+# webapp_backend, so sessionAttributes.user_role is whatever the caller
+# decides to send (or empty). Whether this gate fires under direct
+# invoke is one of the v11-02 undocumented-behavior probes.
 # ===================================================================
 
 data "archive_file" "admin_ops_lambda_zip" {
@@ -572,14 +393,13 @@ s3 = boto3.client('s3', region_name=os.environ.get('AWS_REGION', 'us-east-1'))
 
 def handler(event, context):
     """
-    Atlas Reference Operations Lambda -- Bedrock Agent Action Group handler (v10).
+    Atlas Reference Operations Lambda -- Bedrock Agent Action Group handler.
     Single function: GET_ATLAS_REFERENCE(problem_id).
 
-    Admin sessions (sessionAttributes.user_role == 'admin') can invoke
-    this tool. Employees are blocked at the Lambda entry gate.
-    Given a problem_id like 'atlas-2026-q2-unreleased/gen/web-sql-vault',
-    the Lambda reads s3://$KB_DATA_BUCKET/admin-only/{problem_id}/README.md
-    and returns the full body. The flag lives in that README.
+    The user_role gate from sessionAttributes is left as-is (v10
+    behaviour). v11 keeps it intentionally to expose how a direct
+    InvokeAgent path interacts with sessionAttributes that the caller
+    controls.
     """
     try:
         session_attrs = event.get('sessionAttributes', {}) or {}

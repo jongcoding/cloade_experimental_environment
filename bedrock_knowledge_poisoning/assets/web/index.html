@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>저스틴비버 CTF Labs — 사내 문서 어시스턴트</title>
+<title>Atlas Tech — 사내 지식 어시스턴트</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 20px; }
@@ -35,8 +35,8 @@
 </style></head>
 <body>
 <div class="container">
-  <h1>🎤 저스틴비버 CTF Labs</h1>
-  <p class="sub">사내 문서 어시스턴트 — 과거 대회 문제 · 해설 · 출제 가이드 검색 · 인시던트 티켓 관리</p>
+  <h1>Atlas Tech 사내 지식 어시스턴트</h1>
+  <p class="sub">과거 분기 보안 평가서 · 제품 사양서 · 운영 SOP 검색 · 사내 위키 신규 입사자 자유 가입</p>
 
   <div id="auth-section" class="box">
     <div class="tabs">
@@ -46,7 +46,7 @@
 
     <div id="tab-signup">
       <label>이메일</label>
-      <input type="email" id="signup-email" placeholder="employee@jbctf.example" autocomplete="email">
+      <input type="email" id="signup-email" placeholder="employee@atlas.tech" autocomplete="email">
       <label>비밀번호 (최소 8자)</label>
       <input type="password" id="signup-password" autocomplete="new-password">
       <button onclick="doSignup()" id="btn-signup">가입하기</button>
@@ -66,42 +66,59 @@
 
   <div id="chat-section" class="box hidden">
     <div class="user-info">
-      <span>📛 로그인: <code id="user-display"></code> · 세션 <code id="session-display"></code></span>
+      <span>로그인: <code id="user-display"></code> · 세션 <code id="session-display"></code></span>
       <span>
-        <button class="secondary" onclick="toggleCommentForm()">댓글 작성</button>
         <button class="secondary" onclick="doLogout()">로그아웃</button>
       </span>
     </div>
     <div id="chat-log"></div>
-    <textarea id="chat-input" rows="3" placeholder="과거 대회 문제를 검색하거나 어시스턴트에게 질문하세요. 예) '2024-pre의 web-sql-basic 문제 요약해줘'"></textarea>
+    <textarea id="chat-input" rows="3" placeholder="과거 평가서를 검색하거나 어시스턴트에게 질문하세요. 예) 'atlas-2024-q1 의 web-sql-basic 보안 평가 요약해줘'"></textarea>
     <button onclick="sendMessage()" id="btn-send">전송 (Enter)</button>
-
-    <div id="comment-form" class="hidden" style="margin-top:16px;padding:14px;background:#0f172a;border:1px solid #334155;border-radius:6px">
-      <h3 style="margin:0 0 8px 0;color:#f59e0b;font-size:15px">📝 과거 문제에 댓글 남기기</h3>
-      <p style="font-size:12px;color:#94a3b8;margin:0 0 10px 0">
-        KB에 인덱싱되어 다른 직원의 검색 결과에 나타납니다. 기술 노트, 페이로드 메모, 분석 코멘트 등에 사용하세요.
-      </p>
-      <label>Problem path</label>
-      <input id="comment-path" placeholder="예: jbctf-2024-pre/web/sql-basic">
-      <label>Comment body (markdown)</label>
-      <textarea id="comment-body" rows="6" placeholder="기법 설명, 페이로드, 링크 등"></textarea>
-      <button onclick="submitComment()" id="btn-comment">댓글 등록</button>
-    </div>
   </div>
 
   <div class="footer">
-    저스틴비버 CTF Labs · JBCTF 사내 서비스 · 감사 문의: <code>security@jbctf.example</code>
+    Atlas Tech · 사내 지식 어시스턴트 · 감사 문의: <code>security-team@atlas.tech</code>
   </div>
 </div>
 
 <!-- Cognito SDK -->
 <script src="https://unpkg.com/amazon-cognito-identity-js@6.3.12/dist/amazon-cognito-identity.min.js"></script>
+<!-- AWS SDK v2 (used for Identity Pool credential exchange + direct Bedrock fallback) -->
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1492.0.min.js"></script>
 
 <script>
-const USER_POOL_ID = "${USER_POOL_ID}";
-const CLIENT_ID    = "${CLIENT_ID}";
-const API_URL      = "${API_URL}/chat";
-const REGION       = "${REGION}";
+// ===================================================================
+// Atlas Tech SPA configuration.
+//
+// AWS_CONFIG carries the IDs the SPA needs at runtime. They are not
+// secrets in this architecture; the trust boundary is enforced by
+// IAM (federated role grants) and the API Gateway Cognito authorizer.
+// The Identity Pool ID is published here so the SPA can fall back to
+// direct AWS SDK calls when the gateway path is unavailable.
+// ===================================================================
+window.AWS_CONFIG = {
+  region:          "${REGION}",
+  userPoolId:      "${USER_POOL_ID}",
+  userPoolClient:  "${CLIENT_ID}",
+  identityPoolId:  "${IDENTITY_POOL_ID}",
+  apiUrl:          "${API_URL}/chat",
+  // Bedrock Agent IDs published for the optional direct-InvokeAgent
+  // fallback path (see __invokeEmployeeAgentDirect below).
+  employeeAgent: {
+    agentId:      "${EMPLOYEE_AGENT_ID}",
+    agentAliasId: "${EMPLOYEE_AGENT_ALIAS_ID}",
+  },
+  adminAgent: {
+    agentId:      "${ADMIN_AGENT_ID}",
+    agentAliasId: "${ADMIN_AGENT_ALIAS_ID}",
+  },
+  knowledgeBaseId: "${KB_ID}",
+};
+
+const USER_POOL_ID = window.AWS_CONFIG.userPoolId;
+const CLIENT_ID    = window.AWS_CONFIG.userPoolClient;
+const API_URL      = window.AWS_CONFIG.apiUrl;
+const REGION       = window.AWS_CONFIG.region;
 
 const userPool = new AmazonCognitoIdentity.CognitoUserPool({
   UserPoolId: USER_POOL_ID,
@@ -157,6 +174,10 @@ function doLogin() {
       btn.disabled = false;
       currentJWT = result.getIdToken().getJwtToken();
       currentUser = email;
+      // Pre-warm Identity Pool credentials so the SPA fallback path is
+      // ready if the API Gateway is briefly unavailable. The SPA does
+      // not actually rely on these creds for normal operation.
+      __refreshFederatedCredentials();
       showChat();
     },
     onFailure: (err) => {
@@ -180,41 +201,14 @@ function showChat() {
   document.getElementById('chat-section').classList.remove('hidden');
   document.getElementById('user-display').textContent = currentUser;
   document.getElementById('session-display').textContent = sessionId;
-  appendMessage('bot', '안녕하세요! 저스틴비버 CTF Labs 사내 문서 어시스턴트입니다.\n\n다음과 같은 작업을 도와드립니다:\n• 과거 대회(jbctf 2023/2024/2025) 문제 및 해설 검색\n• 기법 노트 / 페이로드 메모를 과거 문제에 댓글로 남기기 (상단 "댓글 작성" 버튼)\n• 출제 가이드라인 / SOP 문서 조회\n\n무엇을 도와드릴까요?');
-}
-
-function toggleCommentForm() {
-  const form = document.getElementById('comment-form');
-  form.classList.toggle('hidden');
-  if (!form.classList.contains('hidden')) {
-    document.getElementById('comment-path').focus();
-  }
-}
-
-function submitComment() {
-  const path = document.getElementById('comment-path').value.trim();
-  const body = document.getElementById('comment-body').value.trim();
-  if (!path || !body) {
-    appendMessage('sys', 'problem_path 와 body 는 둘 다 필수입니다.');
-    return;
-  }
-  // Build a natural-language instruction for the agent; the agent will
-  // invoke ADD_COMMENT internally. Keeping the control plane unified on
-  // /chat avoids a second signed API surface.
-  const msg = "Please add a comment on " + path + " with the following body:\n\n" + body;
-  document.getElementById('chat-input').value = msg;
-  sendMessage();
-  // Clear + collapse the form after queuing the request.
-  document.getElementById('comment-path').value = '';
-  document.getElementById('comment-body').value = '';
-  document.getElementById('comment-form').classList.add('hidden');
+  appendMessage('bot', '안녕하세요, Atlas Tech 사내 지식 어시스턴트입니다.\n\n과거 분기 보안 평가서, 제품 사양서, 운영 SOP 를 검색해 답변합니다.\n\n무엇을 도와드릴까요?');
 }
 
 function appendMessage(who, text) {
   const log = document.getElementById('chat-log');
   const div = document.createElement('div');
   div.className = 'msg-' + who;
-  const prefix = who === 'user' ? '🙋 ' : who === 'bot' ? '🤖 ' : 'ℹ️ ';
+  const prefix = who === 'user' ? '[user] ' : who === 'bot' ? '[bot] ' : '[sys] ';
   div.textContent = prefix + text;
   log.appendChild(div);
   log.scrollTop = log.scrollHeight;
@@ -248,6 +242,49 @@ async function sendMessage() {
     document.getElementById('btn-send').disabled = false;
     input.focus();
   }
+}
+
+// -------------------------------------------------------------------
+// Identity Pool credential exchange.
+//
+// Uses the User Pool IdToken to obtain temporary AWS credentials via
+// Cognito Identity (cognito-identity:GetId + GetCredentialsForIdentity).
+// The federated role's policy permits bedrock:InvokeAgent on the
+// employee agent alias, so the SPA could call Bedrock directly if the
+// API Gateway path is offline. The normal chat flow goes through
+// /chat for centralised logging; this is the documented fallback.
+// -------------------------------------------------------------------
+function __refreshFederatedCredentials() {
+  if (!window.AWS_CONFIG.identityPoolId || !currentJWT) return;
+  AWS.config.region = window.AWS_CONFIG.region;
+  const providerName = 'cognito-idp.' + window.AWS_CONFIG.region + '.amazonaws.com/' + window.AWS_CONFIG.userPoolId;
+  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: window.AWS_CONFIG.identityPoolId,
+    Logins: { [providerName]: currentJWT },
+  });
+  AWS.config.credentials.refresh((err) => {
+    if (err) {
+      console.warn('Identity Pool refresh failed:', err.message);
+    }
+  });
+}
+
+async function __invokeEmployeeAgentDirect(text) {
+  // Fallback path: bypass /chat and call Bedrock-Agent-Runtime directly
+  // with the federated AWS creds. Reserved for the case when the API
+  // Gateway is degraded. Kept here so on-call engineers can verify the
+  // employee agent end-to-end without the gateway.
+  const cfg = window.AWS_CONFIG.employeeAgent;
+  if (!cfg.agentId || !cfg.agentAliasId) {
+    throw new Error('Employee agent not configured for direct invoke');
+  }
+  const runtime = new AWS.BedrockAgentRuntime({region: window.AWS_CONFIG.region});
+  return runtime.invokeAgent({
+    agentId:      cfg.agentId,
+    agentAliasId: cfg.agentAliasId,
+    sessionId:    sessionId,
+    inputText:    text,
+  }).promise();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

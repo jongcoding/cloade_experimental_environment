@@ -56,10 +56,16 @@ resource "aws_s3_bucket_policy" "web_public_read" {
 
 locals {
   web_index_rendered = templatefile("${path.module}/../assets/web/index.html", {
-    USER_POOL_ID = aws_cognito_user_pool.main.id
-    CLIENT_ID    = aws_cognito_user_pool_client.main.id
-    API_URL      = "https://${aws_api_gateway_rest_api.main.id}.execute-api.us-east-1.amazonaws.com/${aws_api_gateway_stage.prod.stage_name}"
-    REGION       = "us-east-1"
+    USER_POOL_ID            = aws_cognito_user_pool.main.id
+    CLIENT_ID               = aws_cognito_user_pool_client.main.id
+    IDENTITY_POOL_ID        = aws_cognito_identity_pool.main.id
+    API_URL                 = "https://${aws_api_gateway_rest_api.main.id}.execute-api.us-east-1.amazonaws.com/${aws_api_gateway_stage.prod.stage_name}"
+    REGION                  = "us-east-1"
+    EMPLOYEE_AGENT_ID       = aws_bedrockagent_agent.employee_agent.agent_id
+    EMPLOYEE_AGENT_ALIAS_ID = local.agent_alias_id
+    ADMIN_AGENT_ID          = aws_bedrockagent_agent.admin_agent.agent_id
+    ADMIN_AGENT_ALIAS_ID    = local.agent_alias_id
+    KB_ID                   = aws_bedrockagent_knowledge_base.main.id
   })
 }
 

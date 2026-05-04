@@ -1,0 +1,220 @@
+<mxfile host="app.diagrams.net" modified="2026-05-01T00:00:00.000Z" agent="Claude" version="24.7.8" type="device">
+  <diagram id="v12-toktok-service-architecture" name="톡톡지원 서비스 아키텍처">
+    <mxGraphModel dx="1900" dy="1120" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1120" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="톡톡지원 SaaS 서비스 아키텍처" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=26;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="50" y="28" width="700" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="RAG 기반 CS 챗봇 SaaS — 정상 서비스 구성 (Bedrock Agent + Knowledge Base + 출처 링크 발급)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#5F6B7A;" vertex="1" parent="1">
+          <mxGeometry x="52" y="64" width="900" height="22" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend" value="실선 화살표: 동기 호출&#10;점선 화살표: 이벤트 트리거 / 비동기&#10;색상 구분 없음 — 정상 서비스 흐름" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D5DBDB;fontSize=12;align=left;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="32" width="350" height="76" as="geometry" />
+        </mxCell>
+
+        <mxCell id="client-zone" value="Clients" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF7E6;strokeColor=#D6B656;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="320" height="910" as="geometry" />
+        </mxCell>
+
+        <mxCell id="aws-zone" value="AWS Cloud — 톡톡지원 SaaS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F9FB;strokeColor=#AAB7B8;dashed=1;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=18;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="390" y="140" width="1450" height="910" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lane-auth" value="Auth &amp; API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FBFF;strokeColor=#C7D7E8;fontSize=12;fontStyle=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="410" y="180" width="290" height="850" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-compute" value="Compute (Lambda)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8F0;strokeColor=#E8C7A8;fontSize=12;fontStyle=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="720" y="180" width="320" height="850" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-ai" value="Bedrock (AI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8F4FF;strokeColor=#C8B7E8;fontSize=12;fontStyle=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="180" width="320" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-data" value="Data (S3 / DynamoDB / KMS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F4F8F4;strokeColor=#B7D0B7;fontSize=12;fontStyle=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="180" width="420" height="850" as="geometry" />
+        </mxCell>
+
+        <mxCell id="customer" value="손님&#10;(셀러 사이트 방문자)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#1E262E;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.users;" vertex="1" parent="1">
+          <mxGeometry x="100" y="240" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="customer-widget" value="Customer-facing&#10;chatbot widget&#10;(셀러 사이트 임베딩)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6B656;fontSize=12;align=center;verticalAlign=middle;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="200" y="225" width="140" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="staff" value="셀러 / BPO 직원&#10;(seller_admin /&#10;seller_manager /&#10;bpo_editor)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#1E262E;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.users;" vertex="1" parent="1">
+          <mxGeometry x="100" y="430" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="console-qa" value="Console&#10;QA / Preview screen&#10;(raw + rendered)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6B656;fontSize=12;align=center;verticalAlign=middle;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="200" y="425" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="console-faq" value="Console&#10;FAQ / 문서 편집기" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6B656;fontSize=12;align=center;verticalAlign=middle;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="200" y="555" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="console-export" value="Console&#10;Customer export&#10;(seller_admin only)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6B656;fontSize=12;align=center;verticalAlign=middle;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="200" y="665" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cognito" value="Amazon Cognito&#10;User Pool&#10;JWT + groups&#10;(self-signup +&#10;auto-confirm)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;" vertex="1" parent="1">
+          <mxGeometry x="490" y="240" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="api-gw" value="Amazon API Gateway&#10;/chat&#10;Cognito authorizer" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="490" y="430" width="72" height="72" as="geometry" />
+        </mxCell>
+
+        <mxCell id="chat-backend" value="AWS Lambda&#10;chat_backend&#10;InvokeAgent +&#10;source tag parser" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="830" y="430" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="source-link-issuer" value="AWS Lambda&#10;source_link_issuer&#10;document_catalog lookup&#10;+ presigned URL" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="830" y="630" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="kb-ingest" value="AWS Lambda&#10;kb_ingestion_trigger&#10;(S3 event 기반)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="830" y="830" width="72" height="72" as="geometry" />
+        </mxCell>
+
+        <mxCell id="bedrock-agent" value="Amazon Bedrock&#10;Agent (1개)&#10;KB association&#10;(Action Group 없음)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="240" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="bedrock-kb" value="Amazon Bedrock&#10;Knowledge Base&#10;(FAQ / 매뉴얼 /&#10;상품 설명)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="420" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="bedrock-guardrail" value="Bedrock Guardrail&#10;PROMPT_ATTACK&#10;+ sensitive info&#10;(Agent 에 attach)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8C4FFF;fontSize=11;align=center;verticalAlign=middle;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="540" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dynamo-catalog" value="Amazon DynamoDB&#10;document_catalog&#10;(document ID →&#10;S3 key + required_role)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="430" width="72" height="72" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s3-bucket" value="Amazon S3&#10;FitMall workspace bucket" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="640" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-prefixes" value="Bucket prefix 분리&#10;• public/faq/&#10;• public/manuals/&#10;• admin-only/customers/&#10;• admin-only/sales/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7AA116;fontSize=11;align=left;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="635" width="200" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="kms" value="AWS KMS&#10;SSE-KMS key&#10;(bucket 공용)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.kms;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="830" width="72" height="72" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" value="login / JWT" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="staff" target="cognito">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="JWT 발급" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="customer" target="cognito">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" value="/chat (with JWT)" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="customer-widget" target="api-gw">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="270" />
+              <mxPoint x="430" y="466" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" value="/chat (with JWT)" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="console-qa" target="api-gw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" value="signature 검증 통과" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="api-gw" target="chat-backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e6" value="bedrock:InvokeAgent" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="chat-backend" target="bedrock-agent">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1140" y="466" />
+              <mxPoint x="1140" y="276" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" value="KB Retrieve" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="bedrock-agent" target="bedrock-kb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="filter (apply)" style="endArrow=classic;startArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="bedrock-agent" target="bedrock-guardrail">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1330" y="276" />
+              <mxPoint x="1330" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e9" value="lambda:InvokeFunction&#10;(RequestResponse)" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="chat-backend" target="source-link-issuer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e10" value="dynamodb:GetItem" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="source-link-issuer" target="dynamo-catalog">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="666" />
+              <mxPoint x="1100" y="466" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" value="presigned URL 발급&#10;(s3:GetObject 권한으로 sign)" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="source-link-issuer" target="s3-bucket">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e12" value="GetObject + Decrypt&#10;(다운로드 시점)" style="endArrow=classic;startArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="s3-bucket" target="kms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e13" value="문서 업로드" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="console-faq" target="s3-bucket">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1525" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e14" value="export 다운로드 요청" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="console-export" target="api-gw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e15" value="S3 ObjectCreated event" style="endArrow=block;html=1;rounded=1;strokeWidth=1.5;dashed=1;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="s3-bucket" target="kb-ingest">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1300" y="676" />
+              <mxPoint x="1300" y="866" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16" value="KB sync" style="endArrow=block;html=1;rounded=1;strokeWidth=1.5;dashed=1;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="kb-ingest" target="bedrock-kb">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1130" y="866" />
+              <mxPoint x="1130" y="456" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e17" value="답변 + 임시 다운로드 URL" style="endArrow=classic;startArrow=classic;html=1;rounded=1;strokeWidth=2;strokeColor=#5F6B7A;fontSize=11;" edge="1" parent="1" source="chat-backend" target="api-gw">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="note-cognito-groups" value="Cognito User Pool Groups&#10;• seller_admin&#10;• seller_manager&#10;• bpo_editor&#10;(JWT cognito:groups claim)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#DD344C;fontSize=11;align=left;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="430" y="700" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note-source-tag" value="응답 형식&#10;• raw: [source: &lt;document ID&gt;]&#10;• rendered: 임시 다운로드 URL&#10;콘솔 QA 화면은 둘 다 표시" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#ED7100;fontSize=11;align=left;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="750" y="930" width="260" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note-doc-catalog" value="document_catalog 항목&#10;pk: &lt;document ID&gt;&#10;s3_bucket / s3_key&#10;required_role" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C925D1;fontSize=11;align=left;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="430" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note-iam" value="Lambda IAM (요약)&#10;• chat_backend: bedrock:InvokeAgent&#10;  + lambda:InvokeFunction (issuer)&#10;• source_link_issuer: s3:GetObject&#10;  + dynamodb:GetItem + kms:Decrypt&#10;• kb_ingestion_trigger: bedrock:StartIngestionJob" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#ED7100;fontSize=11;align=left;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="930" width="320" height="100" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

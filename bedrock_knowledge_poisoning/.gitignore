@@ -1,42 +1,18 @@
 # bedrock_knowledge_poisoning -- GitHub 공개 시 제외 목록
-#
-# 루트 .gitignore 가 *.tfstate, .terraform/, __pycache__, .venv/, *.zip,
-# *.log 등을 이미 막고 있으므로, 여기서는 시나리오 한정의 추가 항목만
-# 다룬다. 시나리오 운영에 꼭 필요한 파일은 절대 ignore 하지 않는다.
-
-# ---- 개인 작업물 / 외부 클론 -------------------------------------------------
 # venv, drawio-mcp/CloudBeaver 클론, 발표용 자료. 시나리오 운영과 무관.
 .venv-capture/
 drawio-mcp/
 CloudBeaver/
 presentation/
 발표/
-
-# ---- 에이전트 도구 메타 -----------------------------------------------------
-# Claude Code / Cursor 내부 메타 (스케줄 lock 등).
 .claude/
-
-# ---- 워크플로우 산출물 ------------------------------------------------------
-# 매 세션 진행 기록. 시나리오 풀이자/배포자에겐 필요 없다.
-# (개발 트레이스를 같이 공개하고 싶다면 이 두 줄을 지운다)
 harness_state.md
 experiment_log/
-
-# ---- legacy ------------------------------------------------------------------
-# v7 시절 smoke 스크립트. 현재 v10 환경에서는 동작하지 않는다.
 smoke_v7.sh
-
-# ---- terraform 보조 ----------------------------------------------------------
-# apply 시 디버깅용으로 만든 보조 스크립트와 plan 산출물.
-# 운영자/풀이자가 새로 apply 할 때는 필요 없다.
 terraform/_*.sh
 terraform/tfplan*
 
 # ---- validation legacy -------------------------------------------------------
-# v10 회귀에는 regression_v5.py / run_full_chain_v10.sh / _run_one_v10.sh /
-# _check_run_v10.sh / _clean_leftovers_v10.sh / _reingest_seeds.sh /
-# _verify_metadata.sh / config_v10.sh / capture_stages*.py 만 사용한다.
-# 그 이전 버전 산출물은 모두 빼둔다.
 validation/regression_full.py
 validation/regression_v2.py
 validation/regression_v3.py

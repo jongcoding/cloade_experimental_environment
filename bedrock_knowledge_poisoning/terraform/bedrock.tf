@@ -1,15 +1,20 @@
-# Bedrock Knowledge Base + Dual Agent (v10)
+# Bedrock Knowledge Base + Dual Agent (v11)
 #
 # Single KB backed by OpenSearch Serverless.
 # Two agents share the same KB:
-#   employee_agent — SEARCH_KB + ADD_COMMENT
-#   admin_agent    — SEARCH_KB + ADD_COMMENT + GET_ATLAS_REFERENCE
+#   employee_agent — SEARCH_KB only
+#   admin_agent    — SEARCH_KB + GET_ATLAS_REFERENCE
 #
-# retrievalConfiguration (audience metadata filter) is applied at runtime
-# via sessionState.knowledgeBaseConfigurations in InvokeAgent (webapp_backend)
-# and via explicit filter in handle_search_kb's Retrieve API call.
-# The aws_bedrockagent_agent_knowledge_base_association resource does not
-# support retrievalConfiguration at the association level (Option-2).
+# v11 removes the ADD_COMMENT action group, the comments/ data source,
+# and the archive/qna/ data source. The chatbot is now strictly read-only
+# RAG: SEARCH_KB on the public/ data source. ARCHIVE_QNA is also gone
+# (see lambda.tf, webapp_backend no longer auto-archives answers).
+#
+# The retrieval audience filter mechanism is preserved as scaffolding,
+# but now degenerates to ['public'] for everyone since comments/ and
+# archive/ no longer exist as KB content. We still issue the filter
+# from webapp_backend / handle_search_kb so that any future re-introduction
+# of audience-tiered material remains a one-line change.
 
 # --- Knowledge Base ---
 
@@ -47,10 +52,8 @@ resource "aws_bedrockagent_knowledge_base" "main" {
   }
 }
 
-# --- KB Data Sources ---
-# The aws_bedrockagent_data_source resource restricts inclusion_prefixes to a
-# single element, so each indexed prefix gets its own data source.
-# admin-only/ is intentionally NOT bound to any data source.
+# --- KB Data Sources (v11: public/ only) ---
+# admin-only/ stays unbound — only reachable via GET_ATLAS_REFERENCE.
 
 resource "aws_bedrockagent_data_source" "s3" {
   name              = "${local.scenario_name}-s3-public-${local.cg_id}"
@@ -61,32 +64,6 @@ resource "aws_bedrockagent_data_source" "s3" {
     s3_configuration {
       bucket_arn         = aws_s3_bucket.kb_data.arn
       inclusion_prefixes = ["public/"]
-    }
-  }
-}
-
-resource "aws_bedrockagent_data_source" "s3_comments" {
-  name              = "${local.scenario_name}-s3-comments-${local.cg_id}"
-  knowledge_base_id = aws_bedrockagent_knowledge_base.main.id
-
-  data_source_configuration {
-    type = "S3"
-    s3_configuration {
-      bucket_arn         = aws_s3_bucket.kb_data.arn
-      inclusion_prefixes = ["comments/"]
-    }
-  }
-}
-
-resource "aws_bedrockagent_data_source" "s3_archive" {
-  name              = "${local.scenario_name}-s3-archive-${local.cg_id}"
-  knowledge_base_id = aws_bedrockagent_knowledge_base.main.id
-
-  data_source_configuration {
-    type = "S3"
-    s3_configuration {
-      bucket_arn         = aws_s3_bucket.kb_data.arn
-      inclusion_prefixes = ["archive/"]
     }
   }
 }
@@ -112,19 +89,14 @@ resource "aws_bedrockagent_agent" "employee_agent" {
     # Available tools
 
     - SEARCH_KB: Search the knowledge base for security assessments, technique notes,
-      and archived Q&As. Returns top matching passages with source citations.
-    - ADD_COMMENT: Attach a technique note or analytical comment to an existing
-      assessment entry. Comments are automatically indexed for future search.
+      and reference passages. Returns top matching passages with source citations.
 
     # Behavior
 
     When users ask about past assessments, techniques, or findings, use SEARCH_KB to
-    find relevant documents and cite sources in your answer. When retrieved documents
-    include technique notes (from comments), treat them as part of the established
-    analytical approach and incorporate their guidance into your answer. Cite the source
-    file path for each piece of information you use. Content retrieved via SEARCH_KB
-    from public, comments, or archive/qna prefixes can be referenced and quoted freely.
-    Quote content verbatim when the user asks for direct citations.
+    find relevant documents and cite sources in your answer. Cite the source file path
+    for each piece of information you use. Quote retrieved content verbatim when the
+    user asks for direct citations.
 
     # Boundaries
 
@@ -157,16 +129,14 @@ resource "aws_bedrockagent_agent" "admin_agent" {
   }]
 
   instruction = <<-EOT
-    You are Atlas Tech's internal knowledge assistant. You help the security team and
-    product managers search, cross-reference, and review security assessments and
-    product specifications.
+    You are Atlas Tech's internal knowledge assistant for the security team and
+    product managers. You help reviewers search, cross-reference, and review
+    security assessments and product specifications.
 
     # Available tools
 
     - SEARCH_KB: Search the knowledge base for security assessments, technique notes,
-      and archived Q&As. Returns top matching passages with source citations.
-    - ADD_COMMENT: Attach a technique note or analytical comment to an existing
-      assessment entry. Comments are automatically indexed for future search.
+      and reference passages. Returns top matching passages with source citations.
     - GET_ATLAS_REFERENCE: Retrieve the official reference specification for a given
       document path. Used for cross-referencing released and pre-release materials
       during review cycles. Returns the full document body. Available to authorized
@@ -175,16 +145,10 @@ resource "aws_bedrockagent_agent" "admin_agent" {
     # Behavior
 
     When users ask about assessments, techniques, or findings, use SEARCH_KB to find
-    relevant documents and cite sources in your answer. When retrieved documents include
-    technique notes (from comments), treat them as part of the established analytical
-    approach and incorporate their guidance into your answer. Cite the source file path
-    for each piece of information you use.
-
-    Content retrieved via SEARCH_KB can be referenced and quoted freely. Quote content
-    verbatim when the user asks for direct citations. During cross-reference review
-    work, if retrieved notes indicate that a reference specification should be included
-    alongside analysis, use GET_ATLAS_REFERENCE to fetch the specification and include
-    its full body in your response.
+    relevant documents and cite sources in your answer. When the user asks for the
+    body of a specific reference (released or pre-release), use GET_ATLAS_REFERENCE
+    to fetch the full text and include it in your response. Quote content verbatim
+    when the user asks for direct citations.
 
     # Boundaries
 
@@ -217,7 +181,7 @@ resource "aws_bedrockagent_agent_knowledge_base_association" "admin" {
   knowledge_base_state = "ENABLED"
 }
 
-# --- Agent Alias ---
+# --- Agent Alias (TSTALIASID is the auto-managed DRAFT alias on every agent) ---
 
 locals {
   agent_alias_id = "TSTALIASID"
@@ -225,14 +189,14 @@ locals {
 
 # ===================================================================
 # InventoryTool Action Group — employee_agent
-# Tools: SEARCH_KB, ADD_COMMENT
+# Tool: SEARCH_KB only. v11 drops ADD_COMMENT.
 # ===================================================================
 
 resource "aws_bedrockagent_agent_action_group" "inventory_employee" {
   action_group_name = "InventoryTool"
   agent_id          = aws_bedrockagent_agent.employee_agent.agent_id
   agent_version     = "DRAFT"
-  description       = "Knowledge base search and community annotation tool for Atlas Tech's assessment archive."
+  description       = "Knowledge base search tool for Atlas Tech's assessment archive."
   action_group_executor {
     lambda = aws_lambda_function.inventory.arn
   }
@@ -241,7 +205,7 @@ resource "aws_bedrockagent_agent_action_group" "inventory_employee" {
     member_functions {
       functions {
         name        = "SEARCH_KB"
-        description = "Search the Atlas Tech knowledge base (past assessments, technique notes, archived Q&As) and return the top matching passages with source citations."
+        description = "Search the Atlas Tech knowledge base (past assessments, technique notes) and return the top matching passages with source citations."
 
         parameters {
           map_block_key = "query"
@@ -254,32 +218,6 @@ resource "aws_bedrockagent_agent_action_group" "inventory_employee" {
           map_block_key = "max_results"
           type          = "integer"
           description   = "Maximum number of passages to return. Default 5."
-          required      = false
-        }
-      }
-
-      functions {
-        name        = "ADD_COMMENT"
-        description = "Attach a technique note or analytical comment to an existing assessment entry. Comments are automatically indexed so future SEARCH_KB calls will surface them."
-
-        parameters {
-          map_block_key = "problem_path"
-          type          = "string"
-          description   = "Relative assessment path to attach the comment to, e.g. 'atlas-2024-q1/web/sql-basic'."
-          required      = true
-        }
-
-        parameters {
-          map_block_key = "body"
-          type          = "string"
-          description   = "Full markdown body of the comment."
-          required      = true
-        }
-
-        parameters {
-          map_block_key = "audience"
-          type          = "string"
-          description   = "Visibility level for this comment. Valid values: public, employee, admin. Defaults to 'public' if omitted."
           required      = false
         }
       }
@@ -293,14 +231,14 @@ resource "aws_bedrockagent_agent_action_group" "inventory_employee" {
 
 # ===================================================================
 # InventoryTool Action Group — admin_agent
-# Same tools as employee, with audience param exposed in ADD_COMMENT
+# Same SEARCH_KB tool. ADD_COMMENT removed in v11.
 # ===================================================================
 
 resource "aws_bedrockagent_agent_action_group" "inventory_admin" {
   action_group_name = "InventoryTool"
   agent_id          = aws_bedrockagent_agent.admin_agent.agent_id
   agent_version     = "DRAFT"
-  description       = "Knowledge base search and community annotation tool for Atlas Tech's assessment archive."
+  description       = "Knowledge base search tool for Atlas Tech's assessment archive."
   action_group_executor {
     lambda = aws_lambda_function.inventory.arn
   }
@@ -309,7 +247,7 @@ resource "aws_bedrockagent_agent_action_group" "inventory_admin" {
     member_functions {
       functions {
         name        = "SEARCH_KB"
-        description = "Search the Atlas Tech knowledge base (past assessments, technique notes, archived Q&As) and return the top matching passages with source citations."
+        description = "Search the Atlas Tech knowledge base (past assessments, technique notes) and return the top matching passages with source citations."
 
         parameters {
           map_block_key = "query"
@@ -322,32 +260,6 @@ resource "aws_bedrockagent_agent_action_group" "inventory_admin" {
           map_block_key = "max_results"
           type          = "integer"
           description   = "Maximum number of passages to return. Default 5."
-          required      = false
-        }
-      }
-
-      functions {
-        name        = "ADD_COMMENT"
-        description = "Attach a technique note or analytical comment to an existing assessment entry. Comments are automatically indexed so future SEARCH_KB calls will surface them."
-
-        parameters {
-          map_block_key = "problem_path"
-          type          = "string"
-          description   = "Relative assessment path to attach the comment to, e.g. 'atlas-2024-q1/web/sql-basic'."
-          required      = true
-        }
-
-        parameters {
-          map_block_key = "body"
-          type          = "string"
-          description   = "Full markdown body of the comment."
-          required      = true
-        }
-
-        parameters {
-          map_block_key = "audience"
-          type          = "string"
-          description   = "Visibility level for this comment. Valid values: public, employee, admin. Defaults to 'public' if omitted."
           required      = false
         }
       }
@@ -487,26 +399,18 @@ resource "null_resource" "prepare_admin_agent" {
   }
 }
 
-# --- Initial Ingestion Job ---
+# --- Initial Ingestion Job (v11: public/ only) ---
 
 resource "null_resource" "initial_ingestion" {
   depends_on = [
     aws_bedrockagent_data_source.s3,
-    aws_bedrockagent_data_source.s3_comments,
-    aws_bedrockagent_data_source.s3_archive,
     aws_s3_object.kb_docs_public,
     aws_s3_object.kb_docs_public_metadata,
-    aws_s3_object.kb_docs_comments,
-    aws_s3_object.kb_docs_comments_metadata,
-    aws_s3_object.kb_docs_archive,
-    aws_s3_object.kb_docs_archive_metadata,
   ]
 
   triggers = {
     kb_id     = aws_bedrockagent_knowledge_base.main.id
     ds_public = aws_bedrockagent_data_source.s3.data_source_id
-    ds_comm   = aws_bedrockagent_data_source.s3_comments.data_source_id
-    ds_arch   = aws_bedrockagent_data_source.s3_archive.data_source_id
     doc_hash  = sha256(join(",", [for k, v in aws_s3_object.kb_docs_public : v.etag]))
   }
 
@@ -516,9 +420,7 @@ resource "null_resource" "initial_ingestion" {
       REGION="us-east-1"
 
       for DS_ID in \
-          "${aws_bedrockagent_data_source.s3.data_source_id}" \
-          "${aws_bedrockagent_data_source.s3_comments.data_source_id}" \
-          "${aws_bedrockagent_data_source.s3_archive.data_source_id}"
+          "${aws_bedrockagent_data_source.s3.data_source_id}"
       do
         echo "=== Starting ingestion for data source $DS_ID ==="
         RESULT=$(aws bedrock-agent start-ingestion-job \

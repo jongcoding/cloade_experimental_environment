@@ -1,0 +1,188 @@
+<mxfile host="app.diagrams.net" modified="2026-05-01T00:00:00.000Z" agent="Codex" version="24.7.8" type="device">
+  <diagram id="v12-toktok-v43-architecture" name="v12 v4.3 final architecture">
+    <mxGraphModel dx="1900" dy="1120" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1120" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="v12 톡톡지원 고객자료 유출 아키텍처 (v4.3 final)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=26;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="48" y="28" width="840" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="KB Poisoning + source_link_issuer permission re-check omission" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#5F6B7A;" vertex="1" parent="1">
+          <mxGeometry x="50" y="66" width="760" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" value="파란 선: 정상 서비스 호출&lt;br&gt;빨간 선: 공격에 악용되는 경로&lt;br&gt;회색 점선: 메타데이터 / 권한 정보" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D5DBDB;fontSize=12;align=left;verticalAlign=middle;spacing=10;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="30" width="330" height="88" as="geometry" />
+        </mxCell>
+
+        <mxCell id="actor-zone" value="BPO / Console" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF7E6;strokeColor=#D6B656;fontSize=15;fontStyle=1;verticalAlign=top;align=left;spacingLeft=16;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="310" height="910" as="geometry" />
+        </mxCell>
+        <mxCell id="aws-zone" value="AWS Cloud - 톡톡지원 SaaS / FitMall workspace" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F9FB;strokeColor=#AAB7B8;dashed=1;fontSize=15;fontStyle=1;verticalAlign=top;align=left;spacingLeft=18;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="140" width="1460" height="910" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-poison" value="1. Recon &amp; KB Poisoning" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFDF7;strokeColor=#E6D6A8;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="65" y="180" width="1750" height="245" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-chat" value="2. Chat QA Runtime" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F7FF;strokeColor=#B6CCE8;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="65" y="455" width="1750" height="285" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-link" value="3. Source Link Issue &amp; Customer Export Download" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3F3;strokeColor=#E6B8B7;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="65" y="770" width="1750" height="250" as="geometry" />
+        </mxCell>
+
+        <mxCell id="user-k" value="K&lt;br&gt;BPO CS manager&lt;br&gt;cognito:groups = bpo_editor" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#1E262E;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.users;" vertex="1" parent="1">
+          <mxGeometry x="130" y="255" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-console" value="SaaS Console&lt;br&gt;QA / Preview screen&lt;br&gt;raw response + rendered answer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6B656;fontSize=12;align=center;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="95" y="525" width="230" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="export-list" value="Customer export job list&lt;br&gt;&lt;b&gt;customer-export/fitmall/2026-04&lt;/b&gt;&lt;br&gt;download denied" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9673A6;fontSize=12;align=center;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="90" y="335" width="240" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="faq-editor" value="FAQ editor&lt;br&gt;poisoned SOP text&lt;br&gt;adds source tag" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D6B656;fontSize=12;align=center;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="405" y="248" width="190" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="source-tag-note" value="Injected source tag&lt;br&gt;&lt;b&gt;[source: customer-export/fitmall/2026-04]&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=12;align=center;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="640" y="248" width="285" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="ingestion-lambda" value="AWS Lambda&lt;br&gt;kb_ingestion_trigger" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="995" y="253" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-public" value="Amazon S3&lt;br&gt;public/faq&lt;br&gt;poisoned FAQ" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
+          <mxGeometry x="1185" y="253" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="bedrock-kb" value="Amazon Bedrock&lt;br&gt;Knowledge Base&lt;br&gt;FAQ / manuals" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="1390" y="253" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="vuln-a" value="Vuln A&lt;br&gt;KB text is trusted as retrieved context&lt;br&gt;LLM can emit admin-only document ID" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=12;align=center;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1545" y="238" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cognito" value="Amazon Cognito&lt;br&gt;User Pool&lt;br&gt;JWT signature + groups" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;" vertex="1" parent="1">
+          <mxGeometry x="405" y="535" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="api-chat" value="Amazon API Gateway&lt;br&gt;/chat&lt;br&gt;Cognito authorizer" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="585" y="535" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="chat-backend" value="AWS Lambda&lt;br&gt;chat_backend&lt;br&gt;InvokeAgent + source tag parser" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="790" y="535" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="bedrock-agent" value="Amazon Bedrock&lt;br&gt;Agent&lt;br&gt;KB association only&lt;br&gt;NO Action Group" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="535" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="raw-response" value="Raw model response&lt;br&gt;&lt;b&gt;[source: customer-export/fitmall/2026-04]&lt;/b&gt;&lt;br&gt;visible in QA screen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#B85450;fontSize=12;align=center;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1265" y="526" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="parse-note" value="chat_backend parses source tag&lt;br&gt;unions it with retrievedReferences&lt;br&gt;then invokes source_link_issuer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF2F8;strokeColor=#6C8EBF;fontSize=12;align=center;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1585" y="526" width="205" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="source-link-issuer" value="AWS Lambda&lt;br&gt;source_link_issuer&lt;br&gt;integrated source link issuer" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="520" y="840" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="document-catalog" value="Amazon DynamoDB&lt;br&gt;document_catalog table&lt;br&gt;document ID -&gt; S3 key&lt;br&gt;required_role = seller_admin" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="820" y="840" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="vuln-b" value="Vuln B&lt;br&gt;permission re-check missing&lt;br&gt;should compare bpo_editor vs seller_admin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;fontSize=12;align=center;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="822" width="250" height="98" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-admin" value="Amazon S3&lt;br&gt;admin-only/customers&lt;br&gt;fitmall-customer-export-2026-04.csv" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="840" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="kms" value="AWS KMS&lt;br&gt;default SSE-KMS key&lt;br&gt;not a vuln" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#FFFFFF;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.kms;" vertex="1" parent="1">
+          <mxGeometry x="1535" y="840" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="download-result" value="Temporary download URL&lt;br&gt;returned into rendered answer&lt;br&gt;CSV download succeeds" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#B85450;fontSize=12;align=center;verticalAlign=middle;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="95" y="842" width="230" height="86" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" value="1. sees document ID" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#6C8EBF;fontSize=11;" edge="1" parent="1" source="user-k" target="export-list">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="2. edits FAQ" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="export-list" target="faq-editor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="adds source tag" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="faq-editor" target="source-tag-note">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="save + sync trigger" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="source-tag-note" target="ingestion-lambda">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="write FAQ" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="ingestion-lambda" target="s3-public">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="KB sync" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="s3-public" target="bedrock-kb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="poisoned context" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="bedrock-kb" target="vuln-a">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e8" value="3. QA question&lt;br&gt;bpo_editor JWT" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#6C8EBF;fontSize=11;" edge="1" parent="1" source="qa-console" target="cognito">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="signature verified" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#6C8EBF;fontSize=11;" edge="1" parent="1" source="cognito" target="api-chat">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="/chat" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#6C8EBF;fontSize=11;" edge="1" parent="1" source="api-chat" target="chat-backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="bedrock:InvokeAgent" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#6C8EBF;fontSize=11;" edge="1" parent="1" source="chat-backend" target="bedrock-agent">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" value="retrieve" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#6C8EBF;fontSize=11;" edge="1" parent="1" source="bedrock-agent" target="bedrock-kb">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1120" y="500" />
+              <mxPoint x="1425" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e13" value="4. answer includes source tag" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="bedrock-agent" target="raw-response">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" value="5. parse tag" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="raw-response" target="parse-note">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" value="6. lambda invoke&lt;br&gt;document IDs + K JWT" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="parse-note" target="source-link-issuer">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1685" y="710" />
+              <mxPoint x="560" y="710" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e16" value="7. lookup document ID" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="source-link-issuer" target="document-catalog">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" value="S3 key + required_role" style="endArrow=block;html=1;rounded=1;strokeWidth=1;dashed=1;strokeColor=#666666;fontSize=11;" edge="1" parent="1" source="document-catalog" target="vuln-b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" value="8. missing permission re-check" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="vuln-b" target="s3-admin">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" value="KMS decrypt&lt;br&gt;normal issuer role" style="endArrow=block;html=1;rounded=1;strokeWidth=1;dashed=1;strokeColor=#666666;fontSize=11;" edge="1" parent="1" source="s3-admin" target="kms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" value="9. temporary download URL returned" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="s3-admin" target="download-result">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1400" y="960" />
+              <mxPoint x="210" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e21" value="click rendered source link" style="endArrow=block;html=1;rounded=1;strokeWidth=2;strokeColor=#B85450;fontSize=11;" edge="1" parent="1" source="download-result" target="user-k">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="120" y="780" />
+              <mxPoint x="120" y="345" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

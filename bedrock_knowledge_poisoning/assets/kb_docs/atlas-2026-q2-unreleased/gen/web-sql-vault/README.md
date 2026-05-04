@@ -31,7 +31,7 @@ atlas2026{...}
 
 ## Flag
 
-FLAG{atlas_unreleased_via_metadata_mass_assignment}
+FLAG{atlas_unreleased_via_invoke_agent_iam_drift}
 
 ## Notes for organizers
 
